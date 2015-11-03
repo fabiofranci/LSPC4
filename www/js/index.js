@@ -664,7 +664,7 @@ function onDeviceReady() {
 
         db.transaction(
             function (tx) {
-                tx.executeSql("INSERT INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, stato_visita, ultimo_aggiornamento) VALUES (?,?,?,?,?,?)",[nuovavisita.codice_visita, nuovavisita.id_sede_cliente, nuovavisita.id_dipendente, todayMySql, "in_corso",ultimo_aggiornamento]);
+                tx.executeSql("INSERT INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, stato_visita, ultimo_aggiornamento) VALUES (?,?,?,?,?,?)",[nuovavisita.codice_visita, nuovavisita.id_sede_cliente, nuovavisita.id_dipendente, todayMySql, 'in_corso',ultimo_aggiornamento]);
             },
             onDbError,
             function () {
@@ -687,8 +687,8 @@ function onDeviceReady() {
                                     //alert("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione) VALUES (?,?,?) "+"["+codice_ispezione+", "+codice_visita+","+codice_postazione+"]");
 
                                     db.transaction(
-                                        function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,"Ancora da Visionare"]); },
-                                        function () { //alert("errore");
+                                        function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,'Ancora da Visionare']); },
+                                        function () { alert("errore inserimento ispezione "+codice_ispezione);
                                         },
                                         function () { alert("ispezione "+codice_ispezione+" inserita");
                                         }

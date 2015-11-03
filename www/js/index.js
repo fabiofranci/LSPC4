@@ -674,6 +674,7 @@ function onDeviceReady() {
 
                 db.transaction(function (tx2) {
                     var datiRiga='';
+                    alert("id_sede="+id_sede);
                     tx2.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE (id_sede=? )', [id_sede], function (tx2, dati) {
                             var len = dati.rows.length, i;
                             if (len>0) {
@@ -689,7 +690,7 @@ function onDeviceReady() {
                                         function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,"Ancora da Visionare"]); },
                                         function () { //alert("errore");
                                         },
-                                        function () { //alert("ispezione "+codice_ispezione+" inserita");
+                                        function () { alert("ispezione "+codice_ispezione+" inserita");
                                         }
                                     );
 

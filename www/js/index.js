@@ -547,7 +547,7 @@ function onDeviceReady() {
                                 result=confirm("Vuoi aggiungere la postazione alla visita corrente?");
                                 if (result==1) {
                                     db.transaction(
-                                        function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,"Ancora da Visionare"]); },
+                                        function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,'Ancora da Visionare']); },
                                         function () { alert("errore");
                                         },
                                         function () { alert("ispezione "+codice_ispezione+" inserita");
@@ -644,7 +644,7 @@ function onDeviceReady() {
                 var ultimo_aggiornamento=getDateTime();
 
                 db.transaction(
-                    function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,"Ancora da Visionare"]); },
+                    function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,'Ancora da Visionare']); },
                     function () { //alert("errore");
                     },
                     function () { //alert("ispezione "+codice_ispezione+" inserita");
@@ -688,9 +688,9 @@ function onDeviceReady() {
 
                                     db.transaction(
                                         function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,'Ancora da Visionare']); },
-                                        function () { alert("errore inserimento ispezione "+codice_ispezione);
+                                        function () { //alert("errore inserimento ispezione "+codice_ispezione);
                                         },
-                                        function () { alert("ispezione "+codice_ispezione+" inserita");
+                                        function () { //alert("ispezione "+codice_ispezione+" inserita");
                                         }
                                     );
 

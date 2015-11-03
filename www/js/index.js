@@ -346,19 +346,20 @@ function onDeviceReady() {
                     }
                 );
             });
-        });
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
-                    var len = results.rows.length, i;
-                    for (i = 0; i < len; i++){
-                        cliente_e_sede=results.rows.item(i).cliente_e_sede;
-                        id_sede=results.rows.item(i).id;
-                        sedi[id_sede]=cliente_e_sede;
-                        //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+        }).done(function(){
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
+                        var len = results.rows.length, i;
+                        for (i = 0; i < len; i++){
+                            cliente_e_sede=results.rows.item(i).cliente_e_sede;
+                            id_sede=results.rows.item(i).id;
+                            sedi[id_sede]=cliente_e_sede;
+                            //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+                        }
+                    }, function() {
                     }
-                }, function() {
-                }
-            );
+                );
+            });
         });
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }

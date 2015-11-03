@@ -38,7 +38,7 @@ var AggiornamentiIspezioni=false;
 var IDDIPENDENTE=5;
 //Mettere il login con il PIN
 
-var db, len, datiRiga, lastinsertid=0, newid=0, VisiteInCorso=0, VisiteArchivio=0;
+var len, datiRiga, lastinsertid=0, newid=0, VisiteInCorso=0, VisiteArchivio=0;
 var visitedb;
 
 var reteOk;
@@ -104,32 +104,6 @@ function getPosizione() {
     }
 }
 
-    
-    try {
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM LOCAL_ULTIMOAGGIORNAMENTO', [], function (tx, results) {
-                    var len = results.rows.length, i;
-                    for (i = 0; i < len; i++){
-                        global_ultimo_aggiornamento=results.rows.item(i).ultimo_aggiornamento;
-                        //sincronizzaDaServer();
-                        //InizializzaArray();
-                        //alert ("ultimoaggiornamento in db: "+global_ultimo_aggiornamento);
-                    }
-                }, function() {
-                    alert("Creo db");
-                    //db.transaction(creoDb, onDbError, onDbOpenSuccess);
-                    //sincronizzaDaServer();
-                    //InizializzaArray();
-                }
-            );
-        });
-    }
-    catch(err) {
-        alert("ERRORE: Non esiste il db!");
-        //aproDatabase();
-        //sincronizzaDaServer();
-    }
-
-
+alert("Eccomi qui");
 
 });

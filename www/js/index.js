@@ -690,7 +690,7 @@ function onDeviceReady() {
                                     var ancora_da_visionare='Ancora da Visionare';
 
                                     if (i==0) {
-                                        rigaselect="INSERT INTO LOCAL_ISPEZIONI SELECT '"+codice_ispezione+"' AS 'codice_ispezione', '"+codice_visita+"' AS 'codice_visita', '"+codice_postazione+"' as 'codice_postazione', '"+ultimo_aggiornamento+"' AS 'ultimo_aggiornamento','"+ancora_da_visionare+"' AS 'stato_postazione'";
+                                        rigaselect="INSERT INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) SELECT '"+codice_ispezione+"' AS codice_ispezione, '"+codice_visita+"' AS codice_visita, '"+codice_postazione+"' as codice_postazione, '"+ultimo_aggiornamento+"' AS ultimo_aggiornamento,'"+ancora_da_visionare+"' AS stato_postazione ";
                                     } else {
                                         rigaselect+=" UNION ALL SELECT '"+codice_ispezione+"','"+codice_visita+"','"+codice_postazione+"','"+ultimo_aggiornamento+"','"+ancora_da_visionare+"'";
                                     }

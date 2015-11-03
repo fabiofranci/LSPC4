@@ -787,24 +787,11 @@ function onDeviceReady() {
             tx.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE (codice_visita=? AND stato_postazione="Ancora da Visionare")', [VisitaCorrente.codice_visita], function (tx, dati) {
                     var len = dati.rows.length, i;
                     if (len>0) {
-                        datihtml='<div data-role="collapsible-set" data-theme="b" data-content-theme="b">';
                         for (i = 0; i < len; i++){
-
-                            datihtml+='<fieldset data-role="collapsible">';
-                            datihtml+='<legend>'+dati.rows.item(i).codice_postazione+'</legend>';'
-                            datihtml+='<div data-role="controlgroup">';
-                            datihtml+='<input type="radio" name="stato_postazione_'+dati.rows.item(i).codice_postazione+'" value="Mancante" />
-                            datihtml+='<label for="stato_postazione_'+dati.rows.item(i).codice_postazione+'">Mancante</label>
-                            datihtml+='<input type="radio" name="stato_postazione_'+dati.rows.item(i).codice_postazione+'" value="Inaccessibile" />
-                            datihtml+='<label for="stato_postazione_'+dati.rows.item(i).codice_postazione+'">Inaccessibile</label>';
-                            datihtml+='</div>';
-                            datihtml+='</fieldset>';
-
                             //datiRiga+="<a href='#singola_visita?id="+dati.rows.item(i).codice_visita+"'><button data-theme='f'> Visita del "+dati.rows.item(i).data_inizio_visita+"</button></a>";
                             //datiRiga+='<li><a class="singola_visita_link" href="#singola_visita?id='+dati.rows.item(i).id_locale+'">'+dati.rows.item(i).data_inizio_visita+'</a></li>';
-
+                            alert("Ancora da visionare: "+dati.rows.item(i).codice_ispezione);
                         }
-                        datihtml+='</div>';
                         $("#postazionimancanti").html(datihtml);
                         alert(len+" postazioni non sono state visitate! ");
                     } else {

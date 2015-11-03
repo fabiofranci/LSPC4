@@ -687,7 +687,7 @@ function onDeviceReady() {
                                     var codice_visita=nuovavisita.codice_visita;
                                     var ultimo_aggiornamento=getDateTime();
                                     var ancora_da_visionare='Ancora da Visionare';
-                                    //alert("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione) VALUES (?,?,?) "+"["+codice_ispezione+", "+codice_visita+","+codice_postazione+"]");
+                                    alert("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione) VALUES (?,?,?) "+"["+codice_ispezione+", "+codice_visita+","+codice_postazione+"]");
 
                                     db.transaction(
                                         function (tx3) { tx3.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,stato_postazione) VALUES (?,?,?,?,?)", [codice_ispezione,codice_visita,codice_postazione,ultimo_aggiornamento,ancora_da_visionare]); },

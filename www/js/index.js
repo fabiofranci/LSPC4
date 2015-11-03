@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var db;
 var app = {
     // Application Constructor
     initialize: function() {
@@ -34,6 +35,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        db = window.openDatabase("LaSaettaDB", "1.0", "La Saetta DB", 2000000);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

@@ -104,4 +104,32 @@ function getPosizione() {
     }
 }
 
+    
+    try {
+        db.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM LOCAL_ULTIMOAGGIORNAMENTO', [], function (tx, results) {
+                    var len = results.rows.length, i;
+                    for (i = 0; i < len; i++){
+                        global_ultimo_aggiornamento=results.rows.item(i).ultimo_aggiornamento;
+                        //sincronizzaDaServer();
+                        //InizializzaArray();
+                        //alert ("ultimoaggiornamento in db: "+global_ultimo_aggiornamento);
+                    }
+                }, function() {
+                    alert("Creo db");
+                    //db.transaction(creoDb, onDbError, onDbOpenSuccess);
+                    //sincronizzaDaServer();
+                    //InizializzaArray();
+                }
+            );
+        });
+    }
+    catch(err) {
+        alert("ERRORE: Non esiste il db!");
+        //aproDatabase();
+        //sincronizzaDaServer();
+    }
+
+
+
 });

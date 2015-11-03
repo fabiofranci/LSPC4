@@ -907,7 +907,7 @@ function onDeviceReady() {
         if ($.mobile.pageData && $.mobile.pageData.id){
             var codicepostazione=$.mobile.pageData.id;
             PostazioneCorrente.codice_postazione=codicepostazione;
-            //alert("codicevisita= "+codicevisita);
+            alert("codicepostazione= "+codicepostazione);
             db.transaction(function (tx) {
                 tx.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE codice_postazione=? ', [codicepostazione], function (tx, dati) {
                         var len = dati.rows.length;

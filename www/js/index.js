@@ -784,15 +784,17 @@ function onDeviceReady() {
     $("#FINE_VISITA").on('click',function(){
         db.transaction(function (tx) {
             //alert("Visita corrente:"+VisitaCorrente.codice_visita);
-            tx.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE (codice_visita=? AND stato_postazione="Ancora da Visionare")', [VisitaCorrente.codice_visita], function (tx, dati) {
+            tx.executeSql('SELECT * FROM LOCAL_ISPEZIONI JOIN LOCAL_POSTAZIONI ON LOCAL_POSTAZIONI.codice_postazione=LOCAL_ISPEZIONI.codice_postazione WHERE (codice_visita=? AND stato_postazione="Ancora da Visionare")', [VisitaCorrente.codice_visita], function (tx, dati) {
                     var len = dati.rows.length, i;
+                    var datiRiga;
                     if (len>0) {
                         for (i = 0; i < len; i++){
                             //datiRiga+="<a href='#singola_visita?id="+dati.rows.item(i).codice_visita+"'><button data-theme='f'> Visita del "+dati.rows.item(i).data_inizio_visita+"</button></a>";
                             //datiRiga+='<li><a class="singola_visita_link" href="#singola_visita?id='+dati.rows.item(i).id_locale+'">'+dati.rows.item(i).data_inizio_visita+'</a></li>';
-                            alert("Ancora da visionare: "+dati.rows.item(i).codice_ispezione);
+                            alert("Ancora da visionare: "+dati.rows.item(i).nome);
+                            datiRiga+='<li><a class="singola_visita_link" href="#postazione_mancante?id='+dati.rows.item(i).codice_ispezione+'">'+dati.rows.item(i).nome+'</a></li>';
                         }
-                        $("#postazionimancanti").html(datihtml);
+                        alert(datiRiga);
                         alert(len+" postazioni non sono state visitate! ");
                     } else {
                         alert("OK! Tutte le postazioni sono state visitate! Compila il modulo del certificato!");
@@ -1187,7 +1189,7 @@ function onDeviceReady() {
             var stringacomando=comando.join(", ");
             //alert(stringacomando);
             db.transaction(
-                function (tx3) { tx3.executeSql("UPDATE LOCAL_VISITE SET "+stringacomando+",firma_cliente='"+firmacliente+"',stato_visita='conclusa',data_fine_visita='"+ultimo_aggiornamento+"',ultimo_aggiornamento='"+ultimo_aggiornamento+"' WHERE codice_visita=?", [VisitaCorrente.codice_visita]); },
+                function (tx3) { tx3.executeSql("UPDATE LOCAL_VISITE SET "+stringacomando+",firma_cliente='"+firmacliente+"',data_inizio_visita=data_inizio_visita,stato_visita='conclusa',data_fine_visita='"+ultimo_aggiornamento+"',ultimo_aggiornamento='"+ultimo_aggiornamento+"' WHERE codice_visita=?", [VisitaCorrente.codice_visita]); },
                 function () { alert("errore");
                 },
                 function () {

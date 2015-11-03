@@ -187,7 +187,6 @@ function onDeviceReady() {
             getVisiteListFromServer();
             getIspezioniListFromServer();
             setUltimoAggiornamento();
-            alert("Lanciata Sincronizzazione");
         } else {
             alert("Nessuna connessione, sincronizzazione non possibile!");
         }
@@ -792,10 +791,11 @@ function onDeviceReady() {
                             //datiRiga+="<a href='#singola_visita?id="+dati.rows.item(i).codice_visita+"'><button data-theme='f'> Visita del "+dati.rows.item(i).data_inizio_visita+"</button></a>";
                             //datiRiga+='<li><a class="singola_visita_link" href="#singola_visita?id='+dati.rows.item(i).id_locale+'">'+dati.rows.item(i).data_inizio_visita+'</a></li>';
                             alert("Ancora da visionare: "+dati.rows.item(i).nome);
-                            datiRiga+='<li><a class="singola_visita_link" href="#postazione_mancante?id='+dati.rows.item(i).codice_ispezione+'">'+dati.rows.item(i).nome+'</a></li>';
+                            datiRiga+='<a class="singola_visita_link" href="#postazione_mancante?id='+dati.rows.item(i).codice_ispezione+'">'+dati.rows.item(i).nome+'</a><br/>';
                         }
-                        alert(datiRiga);
-                        alert(len+" postazioni non sono state visitate! ");
+                        $("#postazionimancanti").html('');
+                        $("#postazionimancanti").append(datiRiga);
+                        $("#postazione_mancante").trigger("create");
                     } else {
                         alert("OK! Tutte le postazioni sono state visitate! Compila il modulo del certificato!");
                         //devo fare l'update su visite e poi chiamare genera certificati
@@ -1266,7 +1266,6 @@ function onDeviceReady() {
 
     var success='';
     var error='';
-    alert("Benvenuto!");
     db = window.openDatabase("LASAETTADB", "1.0", "Database La Saetta", 200000);
     try {
         db.transaction(function (tx) {

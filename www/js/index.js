@@ -786,7 +786,7 @@ function onDeviceReady() {
             //alert("Visita corrente:"+VisitaCorrente.codice_visita);
             tx.executeSql('SELECT * FROM LOCAL_ISPEZIONI JOIN LOCAL_POSTAZIONI ON LOCAL_POSTAZIONI.codice_postazione=LOCAL_ISPEZIONI.codice_postazione WHERE (codice_visita=? AND stato_postazione="Ancora da Visionare")', [VisitaCorrente.codice_visita], function (tx, dati) {
                     var len = dati.rows.length, i;
-                    var datiRiga;
+                    var datiRiga='';
                     if (len>0) {
                         for (i = 0; i < len; i++){
                             //datiRiga+="<a href='#singola_visita?id="+dati.rows.item(i).codice_visita+"'><button data-theme='f'> Visita del "+dati.rows.item(i).data_inizio_visita+"</button></a>";
@@ -901,6 +901,31 @@ function onDeviceReady() {
                 }
             );
         });
+    });
+
+    $(document).on("pagebeforeshow","#postazione_mancante",function(){ // When entering pagetwo
+        if ($.mobile.pageData && $.mobile.pageData.id){
+            var codicepostazione=$.mobile.pageData.id;
+            PostazioneCorrente.codice_postazione=codicepostazione;
+            //alert("codicevisita= "+codicevisita);
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE codice_postazione=? ', [codicepostazione], function (tx, dati) {
+                        var len = dati.rows.length;
+                        PostazioneCorrente.codice_ispezione=dati.rows.item(0).codice_ispezione;
+                        PostazioneCorrente.id_sede=dati.rows.item(0).id_sede;
+                        PostazioneCorrente.id_servizio=dati.rows.item(0).id_servizio;
+                        PostazioneCorrente.nome=dati.rows.item(0).nome;
+                    }, function() {
+                        //alert("getVisitaCorrente: Errore DB!");
+                    }
+                );
+            });
+        }
+        $("#postazione_mancante_cliente").html(sedi[postazioneCorrente.id_sede]);
+        $("#postazione_mancante_tipo_servizio").html('('+tipiservizio[postazioneCorrente.id_servizio]+') '+descrizioniservizio[postazioneCorrente.id_servizio]);
+        $("#postazione_mancante_nome").html('nome postazione: '+postazioneCorrente.nome);
+        $("#postazione_mancante_CodicePostazione").html('codice postazione: '+postazioneCorrente.codice_postazione);
+        $("#postazione_mancante").trigger("create");
     });
 
 
@@ -1161,6 +1186,33 @@ function onDeviceReady() {
     //---------------------------------------------------------------------------------------
     // (f) Ispezioni
     //---------------------------------------------------------------------------------------
+
+    $("#PM-SALVA").on('click',function(e){
+        e.preventDefault();
+        var ultimo_aggiornamento=getDateTime();
+        var comando=[];
+        var dataArray = $("#FORMpostazionemancante").serializeArray(),
+            len = dataArray.length,
+            dataObj = {};
+        for (i=0; i<len; i++) {
+            dataObj[dataArray[i].name] = dataArray[i].value;
+        }
+        //controllo campi obbligatori
+        if (dataObj['PM_stato_postazione']) {
+            db.transaction(
+                function (tx3) { tx3.executeSql("UPDATE LOCAL_ISPEZIONI SET stato_postazione="+dataObj['PM_stato_postazione']+",data_ispezione='"+ultimo_aggiornamento+"',ultimo_aggiornamento='"+ultimo_aggiornamento+"' WHERE codice_ispezione=?", [postazioneCorrente.codice_ispezione]); },
+                function () { alert("errore");
+                },
+                function () {
+                    AggiornaSuServer();
+                    location.href="#singola_visita?id="+VisitaCorrente.codice_visita;
+                    //alert("ispezione "+postazioneCorrente.codice_ispezione+" aggiornata");
+                }
+            );
+        } else {
+            alert("Inserisci tutti i campi!")
+        }
+    });
 
 
     //---------------------------------------------------------------------------------------

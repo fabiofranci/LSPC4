@@ -161,6 +161,33 @@
 </div>
 <!-- (f) singola visita -->
 
+<!-- (i) postazione mancante -->
+<div data-role="page" id="postazione_mancante">
+    <div data-role="header">
+        <h1>Postazione Mancante</h1>
+    </div>
+    <div data-role="content" role="main">
+        <div id="postazione_mancante_cliente"></div>
+        <div id="postazione_mancante_tipo_servizio"></div>
+        <div id="postazione_mancante_nome"></div>
+        <div id="postazione_mancante_CodicePostazione"></div>
+        <form id="FORMpostazionemancante">
+            <fieldset data-role="collapsible">
+                <legend>Stato Postazione:</legend>
+                <div data-role='controlgroup'>
+                    <input type="radio" name="PM_stato_postazione" id="pm-stato_postazione-choice-1" value="Mancante" />
+                    <label for="pm-stato_postazione-choice-1">Mancante</label>
+                    <input type="radio" name="PM_stato_postazione" id="pm-stato_postazione-choice-2" value="Inaccessibile" />
+                    <label for="pm-stato_postazione-choice-2">Inaccessibile</label>
+                </div>
+            </fieldset>
+            <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><input type="submit" name="PM-SALVA" id="PM-SALVA" value="SALVA" class="btn" data-theme="b"/></div>
+            </fieldset>
+        </form>    </div>
+</div>
+<!-- (f) postazione mancante -->
+
 <!--
 <fieldset data-role="collapsible">
     <legend>Legend</legend>

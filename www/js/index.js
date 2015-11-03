@@ -676,13 +676,12 @@ function onDeviceReady() {
 
                 db.transaction(function (tx2) {
                     var datiRiga='';
-                    alert("id_sede="+id_sede);
                     tx2.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE (id_sede=? )', [id_sede], function (tx2, dati) {
                             var len = dati.rows.length, i;
                             if (len>0) {
                                 alert("Ci sono "+len+" postazioni da inserire nella visita di oggi");
                                 for (i = 0; i < len; i++){
-                                    //alert(dati.rows.item(i).codice_postazione);
+                                    alert(i+"->"+dati.rows.item(i).codice_postazione);
                                     var codice_ispezione=nuovavisita.codice_visita+"|"+dati.rows.item(i).codice_postazione;
                                     var codice_postazione=dati.rows.item(i).codice_postazione;
                                     var codice_visita=nuovavisita.codice_visita;

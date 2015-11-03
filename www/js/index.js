@@ -35,8 +35,20 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-            alert("Eccomi qui 1");
-        //db = window.openDatabase("LaSaettaDB", "1.0", "La Saetta DB", 2000000);
+
+        db = window.openDatabase("LaSaettaDB", "1.0", "La Saetta DB", 2000000);
+
+        alert("Ecco aperto il db");
+
+        $("#homeclienti").html('Ancora niente');
+
+
+
+
+
+
+
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -50,9 +62,3 @@ var app = {
         console.log('Received Event: ' + id);
     }
 };
-
-$(document).on('deviceready', function() {
-
-    alert("Eccomi qui 2");
-
-});

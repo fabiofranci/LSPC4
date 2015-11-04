@@ -799,12 +799,12 @@ function onDeviceReady() {
                         for (i = 0; i < len; i++){
                             //datiRiga+="<a href='#singola_visita?id="+dati.rows.item(i).codice_visita+"'><button data-theme='f'> Visita del "+dati.rows.item(i).data_inizio_visita+"</button></a>";
                             //datiRiga+='<li><a class="singola_visita_link" href="#singola_visita?id='+dati.rows.item(i).id_locale+'">'+dati.rows.item(i).data_inizio_visita+'</a></li>';
-                            //alert("Ancora da visionare: "+dati.rows.item(i).nome);
-                            datiRiga+="<a href='#postazione_mancante?id="+dati.rows.item(i).codice_ispezione+"'><button data-theme='f'> "+dati.rows.item(i).nome+"</button></a>";
+                            alert("Ancora da visionare: "+dati.rows.item(i).nome);
+                            //datiRiga+="<a href='#postazione_mancante?id="+dati.rows.item(i).codice_ispezione+"'><button data-theme='f'> "+dati.rows.item(i).nome+"</button></a>";
                         }
-                        $("#postazionimancanti_list").html('<h4>Ancora da visionare</h4>');
-                        $("#postazionimancanti_list").append(datiRiga);
-                        $("#postazione_mancante").trigger("create");
+                        //$("#postazionimancanti_list").html('<h4>Ancora da visionare</h4>');
+                        //$("#postazionimancanti_list").append(datiRiga);
+                        //$("#postazione_mancante").trigger("create");
                     } else {
                         alert("OK! Tutte le postazioni sono state visitate! Compila il modulo del certificato!");
                         //devo fare l'update su visite e poi chiamare genera certificati

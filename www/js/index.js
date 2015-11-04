@@ -262,7 +262,7 @@ function onDeviceReady() {
                             var obj=dati.rows.item(i);
                             $.post( serviceURL + 'settablepostazioni.php', obj)
                                 .done(function( data ) {
-                                    alert('Aggiornate Postazioni Sul Server');
+                                    //alert('Aggiornate Postazioni Sul Server');
                                 });
                             //for (var prop in obj) {
                             //    alert("obj." + prop + " = " + obj[prop]);
@@ -286,7 +286,7 @@ function onDeviceReady() {
                             var obj=dati.rows.item(i);
                             $.post( serviceURL + 'settablevisite.php', obj)
                                 .done(function( data ) {
-                                    alert('Aggiornate Visite Sul Server');
+                                    //alert('Aggiornate Visite Sul Server');
                                 });
                         }
                     } else {
@@ -307,7 +307,7 @@ function onDeviceReady() {
                             var obj=dati.rows.item(i);
                             $.post( serviceURL + 'settableispezioni.php', obj)
                                 .done(function( data ) {
-                                    alert('Aggiornate Ispezioni Sul Server');
+                                    //alert('Aggiornate Ispezioni Sul Server');
                                 });
                         }
                     } else {

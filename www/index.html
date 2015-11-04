@@ -774,8 +774,9 @@
                     <div id="parentsignature" style="color:darkblue;background-color:lightgrey;margin-bottom:10px; padding: 5px;max-size: 340px;">
                         <div id="fcmsig" style="height:padding: 0 0 0 0;margin: 0 0 0 0;border: 2px dotted #000;width: 100%;"></div>
                     </div>
-                    <input data-theme="a" class="ui-btn-left" type="button" value="Correggi Firma" onclick="$('#fcmsig').jSignature('clear')"/>
-                </div>
+                    <input data-theme="a" class="ui-btn-left" type="button" value="Attiva Firma" onclick="$('#fcmsig').jSignature('clear')"/>
+                    <input data-theme="c" class="ui-btn-right" type="button" value="Correggi Firma" onclick="$('#fcmsig').jSignature({'UndoButton':false,color:"#000000",lineWidth:1});"/>
+    </div>
             </fieldset>
             <div class="ui-block-a"><input type="submit" name="FINEVISITA-SALVA" id="FINEVISITA-SALVA" value="SALVA E INVIA CERTIFICATO" class="btn" data-theme="b"/></div>
         </form>

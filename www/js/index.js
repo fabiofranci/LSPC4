@@ -989,12 +989,12 @@ function onDeviceReady() {
     });
 
 
-    $(document).on("pagebeforeshow","#fine_visita",function(){
-        if($('#fcmsig').find('.jSignature').length == 0){
-            $('#fcmsig').jSignature({'UndoButton':false,color:"#000000",lineWidth:1});
-        }
-        $("#fine_visita").trigger("create");
-    });
+    //$(document).on("pagebeforeshow","#fine_visita",function(){
+    //    if($('#fcmsig').find('.jSignature').length == 0){
+    //        $('#fcmsig').jSignature({'UndoButton':false,color:"#000000",lineWidth:1});
+    //    }
+    //    $("#fine_visita").trigger("create");
+    //});
 
     function InizializzaArray() {
         sedi.length=0;

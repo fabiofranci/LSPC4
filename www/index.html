@@ -771,8 +771,8 @@
                 <div data-role='controlgroup'>
                     <h4>Firma per il Cliente:</h4>
                     <input type="text" id="nome_cliente_firma" name="nome_cliente_firma"/><br/>
-                    <div id="parentsignature" style="color:darkblue;background-color:lightgrey;margin-bottom:10px; padding: 5px;max-size: 340px;">
-                        <div id="fcmsig" style="height:padding: 0 0 0 0;margin: 0 0 0 0;border: 2px dotted #000;width: 100%;"></div>
+                    <div id="parentsignature" style="overflow:hidden;color:darkblue;background-color:lightgrey;margin-bottom:10px; padding: 5px;max-size: 340px;">
+                        <div id="fcmsig"></div>
                     </div>
                     <input data-theme="a" class="ui-btn-left" type="button" value="Correggi Firma" onclick="$('#fcmsig').jSignature('clear')"/>
                 </div>

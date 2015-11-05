@@ -993,7 +993,7 @@ function onDeviceReady() {
         if($('#fcmsig').find('.jSignature').length == 0){
             $('#fcmsig').jSignature({'UndoButton':false,color:"#000000",lineWidth:1});
         }
-        $(this).trigger("pagecreate");
+        $('#fine_visita').trigger("create");
     });
 
     function InizializzaArray() {

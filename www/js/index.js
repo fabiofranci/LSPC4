@@ -1249,13 +1249,13 @@ function onDeviceReady() {
         }
         //controllo campi obbligatori
         if (dataObj['nome_cliente_firma']) {
-            var firmacliente=$('#fcmsig').jSignature("getData");
+            //var firmacliente=$('#fcmsig').jSignature("getData");
 
             try {
                 navigator.camera.getPicture(function(data){
                     firmacliente=data;
                     alert("Dentro:"+firmacliente);
-                },null,{sourceType:1,quality:60});
+                },null,{destinationType:Camera.DestinationType.DATA_URL, allowEdit:false});
             } catch (err) {
                 alert("Errore uso fotocamera");
                 return 1;

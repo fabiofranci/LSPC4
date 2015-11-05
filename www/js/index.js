@@ -1253,7 +1253,7 @@ function onDeviceReady() {
 
             try {
                 navigator.camera.getPicture(function(data){
-                    firmacliente=data;
+                    firmacliente="data:image/jpeg;base64,"+data;
                     alert("Dentro:"+firmacliente);
                 },null,{destinationType:Camera.DestinationType.DATA_URL, allowEdit:false});
             } catch (err) {

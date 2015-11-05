@@ -69,52 +69,7 @@ function onDeviceReady() {
     // (i) GLOBALI
     //---------------------------------------------------------------------------------------
 
-    function getpicture() {
-        try {
-            alert("provo la fotocamera");
-            navigator.camera.getPicture(uploadPhoto,null,{sourceType:1,quality:60});
-        } catch (err) {
-            alert("Errore uso fotocamera");
-            return 1;
-        }
-    }
-    function uploadPhoto(data){
-// this is where you would send the image file to server
-
-        cameraPic.src = "data:image/jpeg;base64," + data;
-        // Successful upload to the server
-        navigator.notification.alert(
-            'Immagine acquisita con successo',  // message
-            okay,                           // callback
-            'Immagine acquisita',              // title
-            'OK'                          // buttonName
-        );
-
-        // upload has failed Fail
-
-        /*
-
-         if (failedToUpload){
-
-         navigator.notification.alert(
-         'Your Photo has failed to upload',
-         failedDismissed,
-         'Photo Not Uploaded',
-         'OK'
-         );
-
-         }
-         */
-
-
-    }
-
-    function okay(){
-        // Do something
-    }
-
-
-
+    var firmacliente='';
     var global_ultimo_aggiornamento='';
 
     var AggiornamentiPostazioni=false;
@@ -828,10 +783,6 @@ function onDeviceReady() {
 
     });
 
-    $("#getPictureButton").on("click",function(){
-        getpicture();
-    })
-
     //$("#postazione_trovata_visita").on('click',function(){
     //    location.href="#ispezioneA2";
     //});
@@ -1299,6 +1250,19 @@ function onDeviceReady() {
         //controllo campi obbligatori
         if (dataObj['nome_cliente_firma']) {
             var firmacliente=$('#fcmsig').jSignature("getData");
+
+            try {
+                navigator.camera.getPicture(function(data){
+                    firmacliente=data;
+                    alert("Dentro:"+firmacliente);
+                },null,{sourceType:1,quality:60});
+            } catch (err) {
+                alert("Errore uso fotocamera");
+                return 1;
+            }
+
+            alert("fuori:"+firmacliente);
+
             //alert(firmacliente);
             var stringacomando=comando.join(", ");
             //alert(stringacomando);

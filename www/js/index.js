@@ -1226,6 +1226,45 @@ function onDeviceReady() {
     //---------------------------------------------------------------------------------------
     // (i) Fine Visita
     //---------------------------------------------------------------------------------------
+
+    function capturePhoto(){
+        navigator.camera.getPicture(uploadPhoto,null,{sourceType:1,quality:60});
+    }
+    function uploadPhoto(data){
+// this is where you would send the image file to server
+
+        cameraPic.src = "data:image/jpeg;base64," + data;
+        // Successful upload to the server
+        navigator.notification.alert(
+            'Immagine acquisita con successo',  // message
+            okay,                           // callback
+            'Immagine acquisita',              // title
+            'OK'                          // buttonName
+        );
+
+        // upload has failed Fail
+
+        /*
+
+         if (failedToUpload){
+
+         navigator.notification.alert(
+         'Your Photo has failed to upload',
+         failedDismissed,
+         'Photo Not Uploaded',
+         'OK'
+         );
+
+         }
+         */
+
+
+    }
+
+    function okay(){
+        // Do something
+    }
+
     $("#FINEVISITA-SALVA").on('click',function(e){
         e.preventDefault();
         //alert("visitacorrente:"+VisitaCorrente.codice_visita);

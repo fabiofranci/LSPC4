@@ -29,6 +29,7 @@
     <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />-->
     <!--<link rel="stylesheet" type="text/css" href="lib/jqm/jquery.mobile-1.4.5.min.css" />-->
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile.flatui.css" />
+    <link rel="stylesheet" type="text/css" href="css/mycss.css" />
     <!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
     <script type="text/javascript" src="lib/jquery/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
@@ -775,6 +776,13 @@
                         <div id="fcmsig" style="height:padding: 0 0 0 0;margin: 0 0 0 0;border: 2px dotted #000;width: 100%;"></div>
                     </div>
                     <input data-theme="a" class="ui-btn-left" type="button" value="Correggi Firma" onclick="$('#fcmsig').jSignature('clear')"/>
+                    <div id="camera">
+                        <button class="camera-control" onclick="capturePhoto();">Scansiona Firma</button>
+
+                        <div style="text-align:center;margin:20px;">
+                            <img id="cameraPic" src="" style="width:auto;height:120px;"></img>
+                        </div>
+                    </div>
                 </div>
             </fieldset>
             <div class="ui-block-a"><input type="submit" name="FINEVISITA-SALVA" id="FINEVISITA-SALVA" value="SALVA E INVIA CERTIFICATO" class="btn" data-theme="b"/></div>

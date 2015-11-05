@@ -1255,7 +1255,13 @@ function onDeviceReady() {
                 navigator.camera.getPicture(function(data){
                     firmacliente="data:image/jpeg;base64,"+data;
                     alert("Dentro:"+firmacliente);
-                },null,{destinationType:Camera.DestinationType.DATA_URL, allowEdit:false});
+                },null,{
+                    correctOrientation: true,
+                    destinationType : Camera.DestinationType.DATA_URL,
+                    sourceType : Camera.PictureSourceType.CAMERA,
+                    quality : 50,
+                    encodingType : Camera.EncodingType.JPEG
+                });
             } catch (err) {
                 alert("Errore uso fotocamera");
                 return 1;

@@ -414,7 +414,7 @@ function onDeviceReady() {
             visite_server = data.items;
             $.each(visite_server, function (index, visita) {
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) VALUES (?,?,?,?,?,?)", [visita.codice_visita, visita.id_sede, visita.id_dipendente, visita.data_inizio_visita_f, visita.data_fine_visita_f, visita.stato_visita]); },
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) VALUES (?,?,?,?,?,?)", [visita.codice_visita, visita.id_sede, visita.id_dipendente, visita.data_inizio_visita, visita.data_fine_visita, visita.stato_visita]); },
                     function () { alert("visita "+visita.codice_visita + " non inserita"); },
                     function () { //alert("visita "+visita.id + " inserita");
                     }

@@ -888,7 +888,7 @@ function onDeviceReady() {
         $("#postazione_trovata_CodicePostazione").html('codice postazione: '+postazioneCorrente.codice_postazione);
         db.transaction(function (tx) {
             var datiRiga='';
-            tx.executeSql('SELECT * FROM LOCAL_VISITE WHERE (id_sede=? AND (stato_visita="in_corso" OR stato_visita="programmata"))', [postazioneCorrente.id_sede], function (tx, dati) {
+            tx.executeSql('SELECT * FROM LOCAL_VISITE WHERE (id_sede=? AND stato_visita="in_corso")', [postazioneCorrente.id_sede], function (tx, dati) {
                     var len = dati.rows.length, i;
                     if (len>0) {
                         for (i = 0; i < len; i++){

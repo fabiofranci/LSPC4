@@ -178,14 +178,6 @@ function onDeviceReady() {
         }
     }
 
-    function sincronizzaDaServer_2() {
-
-    }
-
-
-
-
-
     function sincronizzaDaServer() {
 
         var Connessione=checkConnessione();
@@ -283,55 +275,49 @@ function onDeviceReady() {
                     } else {
                         //alert("Niente postazioni locali da aggiornare");
                     }
-                    //quando arriva qui ha finito!!!
-                    //VISITE
-                    db.transaction(function (tx2) {
-                        tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
-                                var len = dati.rows.length, i;
-                                if (len>0) {
-                                    for (i = 0; i < len; i++){
-                                        //alert("Visita:"+dati.rows.item(i).codice_visita);
-                                        //alert("Ultimo aggiornamento visita:"+dati.rows.item(i).ultimo_aggiornamento);
-                                        var obj=dati.rows.item(i);
-                                        $.post( serviceURL + 'settablevisite.php', obj)
-                                            .done(function( data ) {
-                                                //alert('Aggiornate Visite Sul Server');
-                                            });
-                                    }
-                                } else {
-                                    //alert("Niente visite locali da aggiornare");
-                                }
-                                //quando arriva qui ha finito!!!
-                                //ISPEZIONI
-                                db.transaction(function (tx2) {
-                                    tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
-                                            var len = dati.rows.length, i;
-                                            if (len>0) {
-                                                for (i = 0; i < len; i++){
-                                                    //alert("Ispezione:"+dati.rows.item(i).codice_ispezione);
-                                                    //alert("Ultimo aggiornamento ispezione:"+dati.rows.item(i).ultimo_aggiornamento);
-                                                    var obj=dati.rows.item(i);
-                                                    $.post( serviceURL + 'settableispezioni.php', obj)
-                                                        .done(function( data ) {
-                                                            //alert('Aggiornate Ispezioni Sul Server');
-                                                        });
-                                                }
-                                            } else {
-                                                //alert("Niente ispezioni locali da aggiornare");
-                                            }
-                                            //quando arriva qui ha finito!!!
-                                        }, function() {
-                                            //ERROR!
-                                        }
-                                    );
-                                });
-                            }, function() {
-                                //ERROR!
-                            }
-                        );
-                    });
                 }, function() {
-                    //ERROR!
+                }
+            );
+        });
+        //VISITE
+        db.transaction(function (tx2) {
+            tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
+                    var len = dati.rows.length, i;
+                    if (len>0) {
+                        for (i = 0; i < len; i++){
+                            //alert("Visita:"+dati.rows.item(i).codice_visita);
+                            //alert("Ultimo aggiornamento visita:"+dati.rows.item(i).ultimo_aggiornamento);
+                            var obj=dati.rows.item(i);
+                            $.post( serviceURL + 'settablevisite.php', obj)
+                                .done(function( data ) {
+                                    //alert('Aggiornate Visite Sul Server');
+                                });
+                        }
+                    } else {
+                        //alert("Niente visite locali da aggiornare");
+                    }
+                }, function() {
+                }
+            );
+        });
+        //ISPEZIONI
+        db.transaction(function (tx2) {
+            tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
+                    var len = dati.rows.length, i;
+                    if (len>0) {
+                        for (i = 0; i < len; i++){
+                            //alert("Ispezione:"+dati.rows.item(i).codice_ispezione);
+                            //alert("Ultimo aggiornamento ispezione:"+dati.rows.item(i).ultimo_aggiornamento);
+                            var obj=dati.rows.item(i);
+                            $.post( serviceURL + 'settableispezioni.php', obj)
+                                .done(function( data ) {
+                                    //alert('Aggiornate Ispezioni Sul Server');
+                                });
+                        }
+                    } else {
+                        //alert("Niente ispezioni locali da aggiornare");
+                    }
+                }, function() {
                 }
             );
         });
@@ -1005,6 +991,7 @@ function onDeviceReady() {
             //alert("Visita non definita!");
         }
     });
+
 
     $(document).on("pagebeforeshow","#fine_visita",function(){
         if($('#fcmsig').find('.jSignature').length == 0){

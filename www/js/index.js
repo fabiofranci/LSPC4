@@ -192,13 +192,13 @@ function onDeviceReady() {
         if (Connessione) {
             //alert(global_ultimo_aggiornamento);
             AggiornaSuServer();
-            getClientiListFromServer();
-            getSediClientiListFromServer();
-            getTipiServizioListFromServer();
-            getPostazioniListFromServer();
-            getVisiteListFromServer();
-            getIspezioniListFromServer();
-            setUltimoAggiornamento();
+            //getClientiListFromServer();
+            //getSediClientiListFromServer();
+            //getTipiServizioListFromServer();
+            //getPostazioniListFromServer();
+            //getVisiteListFromServer();
+            //getIspezioniListFromServer();
+            //setUltimoAggiornamento();
         } else {
             alert("Nessuna connessione, sincronizzazione non possibile!");
         }
@@ -320,6 +320,7 @@ function onDeviceReady() {
                                                 //alert("Niente ispezioni locali da aggiornare");
                                             }
                                             //quando arriva qui ha finito!!!
+                                            getClientiListFromServer();
                                         }, function() {
                                             //ERROR!
                                         }
@@ -338,6 +339,7 @@ function onDeviceReady() {
     }
 
     function getClientiListFromServer() {
+        alert("Eccomi qui");
         var iclienti=0;
 
         $.ajax({
@@ -354,7 +356,7 @@ function onDeviceReady() {
                         rigaselect+=" UNION ALL SELECT '"+clienti.id+"','"+clienti.nome_o_ragione_sociale+"','"+clienti.partita_iva+"','"+clienti.codice_fiscale+"','"+clienti.persona_di_riferimento+"','"+clienti.telefono+"','"+clienti.email+"','"+clienti.note+"'";
                     }
                 });
-                alert(rigaselect);
+                //alert(rigaselect);
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
@@ -372,36 +374,57 @@ function onDeviceReady() {
 
             }
         });
-
-
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {
-        $.getJSON(serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
-            sedi_clienti_server = data.items;
-            $.each(sedi_clienti_server, function (index, cliente) {
+
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                sedi_clienti_server = data.items;
+                var i=0;
+                $.each(sedi_clienti_server, function (index, cliente) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO SERVER_SEDI_CLIENTI (id, cliente_e_sede, sede, indirizzo, CAP, citta, provincia, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.cliente_e_sede+"' AS cliente_e_sede, '"+cliente.sede+"' as sede, '"+cliente.indirizzo+"' AS indirizzo,'"+cliente.CAP+"' AS CAP, '"+cliente.citta+"' AS citta,'"+cliente.provincia+"' AS provincia, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+clienti.id+"','"+clienti.cliente_e_sede+"','"+clienti.sede+"','"+clienti.indirizzo+"','"+clienti.CAP+"','"+clienti.citta+"','"+clienti.provincia+"','"+clienti.persona_di_riferimento+"','"+clienti.telefono+"','"+clienti.email+"','"+clienti.note+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_SEDI_CLIENTI (id, cliente_e_sede, sede, indirizzo, CAP, citta, provincia, persona_di_riferimento, telefono, email, note ) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [cliente.id, cliente.cliente_e_sede, cliente.sede, cliente.indirizzo, cliente.CAP, cliente.citta, cliente.provincia, cliente.persona_di_riferimento, cliente.telefono, cliente.email, cliente.note]); },
-                    function () { alert(cliente.cliente_e_sede + " non inserito"); },
-                    function () { //alert(cliente.cliente_e_sede + " inserito");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento sedi clienti");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
+                        db.transaction(function (tx) {
+                            tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
+                                    var len = results.rows.length, i;
+                                    for (i = 0; i < len; i++){
+                                        cliente_e_sede=results.rows.item(i).cliente_e_sede;
+                                        id_sede=results.rows.item(i).id;
+                                        sedi[id_sede]=cliente_e_sede;
+                                        //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+                                    }
+                                }, function() {
+                                }
+                            );
+                        });
+                        //ora può lanciare quella successiva
+                        getTipiServizioListFromServer();
                     }
                 );
-            });
-        }).done(function(){
-            db.transaction(function (tx) {
-                tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
-                        var len = results.rows.length, i;
-                        for (i = 0; i < len; i++){
-                            cliente_e_sede=results.rows.item(i).cliente_e_sede;
-                            id_sede=results.rows.item(i).id;
-                            sedi[id_sede]=cliente_e_sede;
-                            //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
-                        }
-                    }, function() {
-                    }
-                );
-            });
+            },
+            error: function () {
+
+            }
         });
+
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
     function getTipiServizioListFromServer() {

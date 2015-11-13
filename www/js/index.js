@@ -339,8 +339,8 @@ function onDeviceReady() {
 
         $.ajax({
             type: "POST",
-            url: serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento,
-            data: {},
+            url: serviceURL + 'gettableclienti.php',
+            data: {ult: global_ultimo_aggiornamento},
             success:function(data){
                 clienti_server = data.items;
                 var i=0;

@@ -339,18 +339,41 @@ function onDeviceReady() {
 
     function getClientiListFromServer() {
         var iclienti=0;
-        $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
-            clienti_server = data.items;
-            $.each(clienti_server, function (index, cliente) {
+
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                clienti_server = data.items;
+                var i=0;
+                $.each(clienti_server, function (index, cliente) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+clienti.id+"','"+clienti.nome_o_ragione_sociale+"','"+clienti.partita_iva+"','"+clienti.codice_fiscale+"','"+clienti.persona_di_riferimento+"','"+clienti.telefono+"','"+clienti.email+"','"+clienti.note+"'";
+                    }
+                });
+                alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note ) VALUES (?,?,?,?,?,?,?,?,?)", [cliente.id, cliente.nome_o_ragione_sociale, cliente.partita_iva, cliente.codice_fiscale, cliente.tipo, cliente.persona_di_riferimento, cliente.telefono, cliente.email, cliente.note]); },
-                    function () { alert(cliente.nome_o_ragione_sociale + " non inserito"); },
-                    function () { iclienti++;$("#homeclienti").html('Clienti: '+iclienti);
-                        //alert(cliente.nome_o_ragione_sociale + " inserito");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento clienti");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora chiama quella successiva
+                        getSediClientiListFromServer();
                     }
                 );
-            });
+            },
+            error: function () {
+
+            }
         });
+
+
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {
@@ -714,7 +737,7 @@ function onDeviceReady() {
                                     }
                                     var AggiornamentiIspezioni=true;
                                 }
-                                alert(rigaselect);
+                                //alert(rigaselect);
                                 db.transaction(
                                     function (tx3) { tx3.executeSql(rigaselect); },
                                     function () { alert("errore inserimento ");

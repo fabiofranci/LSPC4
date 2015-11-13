@@ -320,7 +320,6 @@ function onDeviceReady() {
                                                 //alert("Niente ispezioni locali da aggiornare");
                                             }
                                             //quando arriva qui ha finito!!!
-                                            getClientiListFromServer();
                                         }, function() {
                                             //ERROR!
                                         }
@@ -339,7 +338,6 @@ function onDeviceReady() {
     }
 
     function getClientiListFromServer() {
-        alert("Eccomi qui");
         var iclienti=0;
 
         $.ajax({
@@ -428,30 +426,52 @@ function onDeviceReady() {
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
     function getTipiServizioListFromServer() {
-        $.getJSON(serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento, function (data) {
-            tipi_servizio_server = data.items;
-            $.each(tipi_servizio_server, function (index, tiposervizio) {
+
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                tipi_servizio_server = data.items;
+                var i=0;
+                $.each(tipi_servizio_server, function (index, tiposervizio) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) SELECT '"+tiposervizio.id+"' AS id, '"+tiposervizio.servizio+"' AS servizio, '"+tiposervizio.descrizione_servizio+"' as descrizione_servizio  ";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+tiposervizio.id+"','"+tiposervizio.servizio+"','"+tiposervizio.descrizione_servizio+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) VALUES (?,?,?)", [tiposervizio.id, tiposervizio.servizio, tiposervizio.descrizione_servizio]); },
-                    function () { alert(tiposervizio.servizio + " non inserito"); },
-                    function () { //alert(tiposervizio.servizio + " inserito");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento tipi servizio");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
+                        db.transaction(function (tx) {
+                            tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
+                                    var len = results.rows.length, i;
+                                    for (i = 0; i < len; i++){
+                                        var id_servizio=results.rows.item(i).id;
+                                        descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
+                                        tipiservizio[id_servizio]=results.rows.item(i).servizio;
+                                        //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
+                                    }
+                                }, function() {
+                                }
+                            );
+                        });
+                        //ora può lanciare quella successiva
+                        getPostazioniListFromServer();
                     }
                 );
-            });
-        });
-        //setUltimoAggiornamento('getTipiServizioListFromServer');
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
-                    var len = results.rows.length, i;
-                    for (i = 0; i < len; i++){
-                        var id_servizio=results.rows.item(i).id;
-                        descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
-                        tipiservizio[id_servizio]=results.rows.item(i).servizio;
-                        //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
-                    }
-                }, function() {
-                }
-            );
+            },
+            error: function () {
+
+            }
         });
 
     }

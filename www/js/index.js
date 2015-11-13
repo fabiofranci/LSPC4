@@ -148,7 +148,7 @@ function onDeviceReady() {
 
 
     //-------------------------------------------------
-    // GESTIONE CONNESSIONE //per ora non funziona
+    // GESTIONE CONNESSIONE
     //-------------------------------------------------
     function checkConnessione() {
         try {
@@ -179,7 +179,7 @@ function onDeviceReady() {
     }
 
     function sincronizzaDaServer() {
-        alert("Sincrnonizzo");
+        alert("Sincronizzo");
         var Connessione=checkConnessione();
         if (Connessione) {
             //alert(global_ultimo_aggiornamento);
@@ -315,6 +315,7 @@ function onDeviceReady() {
                                                 //alert("Niente ispezioni locali da aggiornare");
                                             }
                                             //quando arriva qui ha finito!!!
+                                            getClientiListFromServer();
                                         }, function() {
                                             //ERROR!
                                         }

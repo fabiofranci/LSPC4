@@ -521,7 +521,7 @@ function onDeviceReady() {
                 var i=0;
                 $.each(visite_server, function (index, visita) {
                     if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) SELECT '"+visita.codice_visita+"' AS codice_visita, '"+vista.id_sede+"' AS id_sede, '"+visita.id_dipendente+"' as id_dipendente, '"+visita.data_inizio_visita+"' AS data_inizio_visita, '"+visita.data_fine_visita+"' as data_fine_visita, '"+visita.stato_visita+"' AS stato_visita";
+                        rigaselect="INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) SELECT '"+visita.codice_visita+"' AS codice_visita, '"+visita.id_sede+"' AS id_sede, '"+visita.id_dipendente+"' as id_dipendente, '"+visita.data_inizio_visita+"' AS data_inizio_visita, '"+visita.data_fine_visita+"' as data_fine_visita, '"+visita.stato_visita+"' AS stato_visita";
                     } else {
                         rigaselect+=" UNION ALL SELECT '"+visita.codice_visita+"','"+visita.id_sede+"','"+visita.id_dipendente+"','"+visita.data_inizio_visita+"','"+visita.data_fine_visita+"','"+visita.stato_visita+"'";
                     }
@@ -546,37 +546,80 @@ function onDeviceReady() {
         });
     }
     function getIspezioniListFromServer() {
-        $.getJSON(serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento, function (data) {
-            ispezioni_server = data.items;
-            $.each(ispezioni_server, function (index, isp) {
+
+        alert("Dentro getIspezioniListFromServer");
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                ispezioni_server = data.items;
+                var i=0;
+                $.each(ispezioni_server, function (index, isp) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione, codice_postazione, codice_visita, data_ispezione, stato_postazione, stato_esca_roditori, collocato_adescante_roditori, stato_piastra_collante_insetti_striscianti, ooteche_orientalis, adulti_orientalis, ooteche_germanica, adulti_germanica, ooteche_supella_longipalpa, adulti_supella_longipalpa, ooteche_periplaneta_americana, adulti_periplaneta_americana, stato_piastra_insetti_volanti, presenza_muscidi, presenza_imenotteri_vespidi, presenza_imenotteri_calabronidi, presenza_dittere, presenza_altri_tipi_insetti, note_per_cliente, nutrie_tana, nutrie_target, presenza_target_lepidotteri, tipo_target_lepidotteri, latitudine, longitudine, ultimo_aggiornamento) SELECT
+                        '"+isp.codice_ispezione+"' AS codice_ispezione, '"+isp.codice_postazione+"' AS codice_postazione, '"+isp.codice_visita+"' AS codice_visita, '"+isp.data_ispezione+"' AS data_ispezione, '"+isp.stato_postazione+"' AS stato_postazione, '"+isp.stato_esca_roditori+"' AS stato_esca_roditori, '"+isp.collocato_adescante_roditori+"' AS collocato_adescante_roditori, '"+isp.stato_piastra_collante_insetti_striscianti+"' AS stato_piastra_collante_insetti_striscianti, '"+isp.ooteche_orientalis+"' AS ooteche_orientalis, '"+isp.adulti_orientalis+"' AS adulti_orientalis, '"+isp.ooteche_germanica+"' AS ooteche_germanica, '"+isp.adulti_germanica+"' AS adulti_germanica, '"+isp.ooteche_supella_longipalpa+"' AS ooteche_supella_longipalpa, '"+isp.adulti_supella_longipalpa+"' AS adulti_supella_longipalpa, '"+isp.ooteche_periplaneta_americana+"' AS ooteche_periplaneta_americana, '"+isp.adulti_periplaneta_americana+"' AS adulti_periplaneta_americana, '"+isp.stato_piastra_insetti_volanti+"' AS stato_piastra_insetti_volanti, '"+isp.presenza_muscidi+"' AS presenza_muscidi, '"+isp.presenza_imenotteri_vespidi+"' AS presenza_imenotteri_vespidi, '"+isp.presenza_imenotteri_calabronidi+"' AS presenza_imenotteri_calabronidi, '"+isp.presenza_dittere+"' AS presenza_dittere, '"+isp.presenza_altri_tipi_insetti+"' AS presenza_altri_tipi_insetti, '"+isp.note_per_cliente+"' AS note_per_cliente, '"+isp.nutrie_tana+"' AS nutrie_tana, '"+isp.nutrie_target+"' AS nutrie_target, '"+isp.presenza_target_lepidotteri+"' AS presenza_target_lepidotteri, '"+isp.tipo_target_lepidotteri+"' AS tipo_target_lepidotteri, '"+isp.latitudine+"' AS latitudine, '"+isp.longitudine+"' AS longitudine, '"+isp.ultimo_aggiornamento+"' AS ultimo_aggiornamento";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT
+                        '"+isp.codice_ispezione+"', '"+isp.codice_postazione+"', '"+isp.codice_visita+"', '"+isp.data_ispezione+"', '"+isp.stato_postazione+"', '"+isp.stato_esca_roditori+"', '"+isp.collocato_adescante_roditori+"', '"+isp.stato_piastra_collante_insetti_striscianti+"', '"+isp.ooteche_orientalis+"', '"+isp.adulti_orientalis+"', '"+isp.ooteche_germanica+"', '"+isp.adulti_germanica+"', '"+isp.ooteche_supella_longipalpa+"', '"+isp.adulti_supella_longipalpa+"', '"+isp.ooteche_periplaneta_americana+"', '"+isp.adulti_periplaneta_americana+"', '"+isp.stato_piastra_insetti_volanti+"', '"+isp.presenza_muscidi+"', '"+isp.presenza_imenotteri_vespidi+"', '"+isp.presenza_imenotteri_calabronidi+"', '"+isp.presenza_dittere+"', '"+isp.presenza_altri_tipi_insetti+"', '"+isp.note_per_cliente+"', '"+isp.nutrie_tana+"', '"+isp.nutrie_target+"', '"+isp.presenza_target_lepidotteri+"', '"+isp.tipo_target_lepidotteri+"', '"+isp.latitudine+"', '"+isp.longitudine+"', '"+isp.ultimo_aggiornamento+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione, codice_postazione, codice_visita, data_ispezione, stato_postazione, stato_esca_roditori, collocato_adescante_roditori, stato_piastra_collante_insetti_striscianti, ooteche_orientalis, adulti_orientalis, ooteche_germanica, adulti_germanica, ooteche_supella_longipalpa, adulti_supella_longipalpa, ooteche_periplaneta_americana, adulti_periplaneta_americana, stato_piastra_insetti_volanti, presenza_muscidi, presenza_imenotteri_vespidi, presenza_imenotteri_calabronidi, presenza_dittere, presenza_altri_tipi_insetti, note_per_cliente, nutrie_tana, nutrie_target, presenza_target_lepidotteri, tipo_target_lepidotteri, latitudine, longitudine, ultimo_aggiornamento) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [isp.codice_ispezione, isp.codice_postazione, isp.codice_visita, isp.data_ispezione, isp.stato_postazione, isp.stato_esca_roditori, isp.collocato_adescante_roditori, isp.stato_piastra_collante_insetti_striscianti, isp.ooteche_orientalis, isp.adulti_orientalis, isp.ooteche_germanica, isp.adulti_germanica, isp.ooteche_supella_longipalpa, isp.adulti_supella_longipalpa, isp.ooteche_periplaneta_americana, isp.adulti_periplaneta_americana, isp.stato_piastra_insetti_volanti, isp.presenza_muscidi, isp.presenza_imenotteri_vespidi, isp.presenza_imenotteri_calabronidi, isp.presenza_dittere, isp.presenza_altri_tipi_insetti, isp.note_per_cliente, isp.nutrie_tana, isp.nutrie_target, isp.presenza_target_lepidotteri, isp.tipo_target_lepidotteri, isp.latitudine, isp.longitudine, isp.ultimo_aggiornamento]); },
-                    function () { alert("ispezione "+isp.codice_ispezione + " non inserita"); },
-                    function () { //alert("ispezione "+isp.id + " inserita");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento ispezioni");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora chiama quella successiva
+                        getUsersListFromServer();
                     }
                 );
-            });
+            },
+            error: function () {
+
+            }
         });
         //setUltimoAggiornamento('getIspezioniListFromServer');
     }
     function getUsersListFromServer() {
-        $.getJSON(serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento, function (data) {
-            users_server = data.items;
-            $.each(users_server, function (index, user) {
+        alert("Dentro getUsersListFromServer");
+
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                users_server = data.items;
+                var i=0;
+                $.each(users_server, function (index, user) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) SELECT '"+user.id+"' AS id, '"+user.id_ruolo+"' AS id_ruolo, '"+user.id+"' as PIN, '"+user.Nome+"' AS Nome, '"+user.Cognome+"' as Cognome, '"+user.email+"' AS email";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+user.id+"','"+user.id_ruolo+"','"+user.PIN+"','"+user.Nome+"','"+user.Cognome+"','"+user.email+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) VALUES (?,?,?,?,?,?)", [user.id, user.id_ruolo, user.PIN, user.Nome, user.Cognome, user.email]); },
-                    function () { alert("user "+user.id + " non inserito"); },
-                    function () { //alert("user "+user.id + " inserito");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento visite");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora chiama quella successiva
+                        setUltimoAggiornamento('getUsersListFromServer');
                     }
                 );
-                for (var i in users_server) {
-                    var utente=users_server[i];
-                    users[utente.id]=utente.nome+' '+utente.cognome;
-                    //alert(cliente.id+' -> '+cliente.cliente_e_sede);
-                }
-            });
+            },
+            error: function () {
+
+            }
         });
-        setUltimoAggiornamento('getUsersListFromServer');
+
     }
 
     function setUltimoAggiornamento(msg) {
@@ -586,9 +629,10 @@ function onDeviceReady() {
             function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_ULTIMOAGGIORNAMENTO (id,ultimo_aggiornamento) VALUES (?,?)", [1,global_ultimo_aggiornamento]); },
             function () { alert("ultimo aggiornamento non inserito"); },
             function () { //alert("ispezione "+isp.id + " inserita");
+                $("#ultimo_aggiornamento_content").html('Ultimo aggiornamento:<br/>'+global_ultimo_aggiornamento);
             }
         );
-        $("#ultimo_aggiornamento_content").html('Ultimo aggiornamento:<br/>'+global_ultimo_aggiornamento);
+
     }
 
     // (i) Cerca Postazione

@@ -178,16 +178,8 @@ function onDeviceReady() {
         }
     }
 
-    function sincronizzaDaServer_2() {
-
-    }
-
-
-
-
-
     function sincronizzaDaServer() {
-
+        alert("Sincrnonizzo");
         var Connessione=checkConnessione();
         if (Connessione) {
             //alert(global_ultimo_aggiornamento);
@@ -265,6 +257,7 @@ function onDeviceReady() {
         //alert("Ultimo aggiornamento:"+ultimoagg);
         //POSTAZIONI
         db.transaction(function (tx2) {
+            alert("Postazioni verso il server");
             tx2.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                     var len = dati.rows.length, i;
                     if (len>0) {
@@ -286,6 +279,7 @@ function onDeviceReady() {
                     //quando arriva qui ha finito!!!
                     //VISITE
                     db.transaction(function (tx2) {
+                        alert("Visite verso il server");
                         tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                                 var len = dati.rows.length, i;
                                 if (len>0) {
@@ -304,6 +298,7 @@ function onDeviceReady() {
                                 //quando arriva qui ha finito!!!
                                 //ISPEZIONI
                                 db.transaction(function (tx2) {
+                                    alert("Ispezioni verso il server");
                                     tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                                             var len = dati.rows.length, i;
                                             if (len>0) {
@@ -338,6 +333,7 @@ function onDeviceReady() {
     }
 
     function getClientiListFromServer() {
+        alert("Dentro getClientiListFromServer");
         var iclienti=0;
 
         $.ajax({
@@ -375,6 +371,7 @@ function onDeviceReady() {
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {
+        alert("Dentro getSediClientiListFromServer");
 
         $.ajax({
             type: "POST",
@@ -426,6 +423,7 @@ function onDeviceReady() {
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
     function getTipiServizioListFromServer() {
+        alert("Dentro getTipiServizioListFromServer");
 
         $.ajax({
             type: "POST",
@@ -476,32 +474,75 @@ function onDeviceReady() {
 
     }
     function getPostazioniListFromServer() {
-        $.getJSON(serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento, function (data) {
-            postazioni_server = data.items;
-            $.each(postazioni_server, function (index, postazione) {
+        alert("Dentro getPostazioniListFromServer");
+
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                postazioni_server = data.items;
+                var i=0;
+                $.each(postazioni_server, function (index, postazione) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO LOCAL_POSTAZIONI (id_sede, id_servizio, codice_postazione, nome) SELECT '"+postazione.id_sede+"' AS id_sede, '"+postazione.id_servizio+"' AS id_servizio, '"+postazione.codice_postazione+"' as codice_postazione, '"+postazione.nome+"' AS nome";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+postazione.id_sede+"','"+postazione.id_servizio+"','"+postazione.codice_postazione+"','"+postazione.nome+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_POSTAZIONI (id_sede, id_servizio, codice_postazione, nome) VALUES (?,?,?,?)", [postazione.id_sede, postazione.id_servizio, postazione.codice_postazione, postazione.nome]); },
-                    function () { alert(postazione.codice_postazione + " non inserito"); },
-                    function () { //alert(postazione.nome + " inserito");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento postazioni");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora chiama quella successiva
+                        getVisiteListFromServer();
                     }
                 );
-            });
+            },
+            error: function () {
+
+            }
         });
-        setUltimoAggiornamento('getPostazioniListFromServer');
     }
     function getVisiteListFromServer() {
-        $.getJSON(serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento, function (data) {
-            visite_server = data.items;
-            $.each(visite_server, function (index, visita) {
+        alert("Dentro getVisiteListFromServer");
+        $.ajax({
+            type: "POST",
+            url: serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento,
+            data: {},
+            success:function(data){
+                visite_server = data.items;
+                var i=0;
+                $.each(visite_server, function (index, visita) {
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) SELECT '"+visita.codice_visita+"' AS codice_visita, '"+vista.id_sede+"' AS id_sede, '"+visita.id_dipendente+"' as id_dipendente, '"+visita.data_inizio_visita+"' AS data_inizio_visita, '"+visita.data_fine_visita+"' as data_fine_visita, '"+visita.stato_visita+"' AS stato_visita";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+visita.codice_visita+"','"+visita.id_sede+"','"+visita.id_dipendente+"','"+visita.data_inizio_visita+"','"+visita.data_fine_visita+"','"+visita.stato_visita+"'";
+                    }
+                });
+                //alert(rigaselect);
+                //ora può lanciare la transazione
                 db.transaction(
-                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) VALUES (?,?,?,?,?,?)", [visita.codice_visita, visita.id_sede, visita.id_dipendente, visita.data_inizio_visita, visita.data_fine_visita, visita.stato_visita]); },
-                    function () { alert("visita "+visita.codice_visita + " non inserita"); },
-                    function () { //alert("visita "+visita.id + " inserita");
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    function () {
+                        alert("errore inserimento visite");
+                    },
+                    function () {
+                        //alert("ispezioni inserite");
+                        //ora chiama quella successiva
+                        getIspezioniListFromServer();
                     }
                 );
-            });
+            },
+            error: function () {
+
+            }
         });
-        //setUltimoAggiornamento('getVisiteListFromServer');
     }
     function getIspezioniListFromServer() {
         $.getJSON(serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento, function (data) {
@@ -1385,14 +1426,14 @@ function onDeviceReady() {
                     for (i = 0; i < len; i++){
                         global_ultimo_aggiornamento=results.rows.item(i).ultimo_aggiornamento;
                         sincronizzaDaServer();
-                        InizializzaArray();
+                        //InizializzaArray();
                         //alert ("ultimoaggiornamento in db: "+global_ultimo_aggiornamento);
                     }
                 }, function() {
                     alert("Creo db");
                     db.transaction(creoDb, onDbError, onDbOpenSuccess);
                     sincronizzaDaServer();
-                    InizializzaArray();
+                    //InizializzaArray();
                 }
             );
         });

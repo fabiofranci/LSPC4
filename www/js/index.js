@@ -350,7 +350,7 @@ function onDeviceReady() {
                 if (i==0) {
                     rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
                 } else {
-                    rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
+                    rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.tipo+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
                 }
                 i++;
             });

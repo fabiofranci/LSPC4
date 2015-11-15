@@ -375,13 +375,15 @@ function onDeviceReady() {
                     $("#Clienti").addClass('updated_class');
 
                     //ora chiama quella successiva
-                    getSediClientiListFromServer();
+                    //getSediClientiListFromServer();
+                    setUltimoAggiornamento('getClientiListFromServer');
                 }
             );
         }
         );
         //setUltimoAggiornamento('getClientiListFromServer');
     }
+    /*
     function getSediClientiListFromServer() {
         console.log("Dentro getSediClientiListFromServer");
 
@@ -589,7 +591,7 @@ function onDeviceReady() {
         //setUltimoAggiornamento('getIspezioniListFromServer');
     }
     function getUsersListFromServer() {
-        alert("Dentro getUsersListFromServer");
+        console.log("Dentro getUsersListFromServer");
 
         $.getJSON(serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento, function (data) {
             console.log("getUsersListFromServer post success");
@@ -623,9 +625,9 @@ function onDeviceReady() {
         }
 
     }
-
+*/
     function setUltimoAggiornamento(msg) {
-        //alert(msg);
+        console.log(msg);
         global_ultimo_aggiornamento=getDateTime();
         db.transaction(
             function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_ULTIMOAGGIORNAMENTO (id,ultimo_aggiornamento) VALUES (?,?)", [1,global_ultimo_aggiornamento]); },

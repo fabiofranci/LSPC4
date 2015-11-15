@@ -373,6 +373,8 @@ function onDeviceReady() {
                     $("#Clienti").removeClass('updating_class');
                     $("#Clienti").addClass('updated_class');
 
+                    console.log("getClientiListFromServer post success finito");
+
                     //ora chiama quella successiva
                     getSediClientiListFromServer();
                     //setUltimoAggiornamento('getClientiListFromServer');

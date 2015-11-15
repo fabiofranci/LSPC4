@@ -270,8 +270,6 @@ function onDeviceReady() {
                             var obj=dati.rows.item(i);
                             $.post( serviceURL + 'settablepostazioni.php', obj)
                                 .done(function( data ) {
-                                    $("#PostazioniSuServer").removeClass('updating_class');
-                                    $("#PostazioniSuServer").addClass('updated_class');
                                     //alert('Aggiornate Postazioni Sul Server');
                                 });
                             //for (var prop in obj) {
@@ -281,6 +279,8 @@ function onDeviceReady() {
                     } else {
                         //alert("Niente postazioni locali da aggiornare");
                     }
+                    $("#PostazioniSuServer").removeClass('updating_class');
+                    $("#PostazioniSuServer").addClass('updated_class');
                     //quando arriva qui ha finito!!!
                     //VISITE
                     db.transaction(function (tx2) {
@@ -294,15 +294,14 @@ function onDeviceReady() {
                                         var obj=dati.rows.item(i);
                                         $.post( serviceURL + 'settablevisite.php', obj)
                                             .done(function( data ) {
-                                                $("#VisiteSuServer").removeClass('updating_class');
-                                                $("#VisiteSuServer").addClass('updated_class');
-
                                             });
                                     }
                                 } else {
                                     //alert("Niente visite locali da aggiornare");
                                 }
                                 //quando arriva qui ha finito!!!
+                                $("#VisiteSuServer").removeClass('updating_class');
+                                $("#VisiteSuServer").addClass('updated_class');
                                 //ISPEZIONI
                                 db.transaction(function (tx2) {
                                     alert("Ispezioni verso il server");
@@ -315,14 +314,14 @@ function onDeviceReady() {
                                                     var obj=dati.rows.item(i);
                                                     $.post( serviceURL + 'settableispezioni.php', obj)
                                                         .done(function( data ) {
-                                                            $("#IspezioniSuServer").removeClass('updating_class');
-                                                            $("#IspezioniSuServer").addClass('updated_class');
                                                         });
                                                 }
                                             } else {
                                                 //alert("Niente ispezioni locali da aggiornare");
                                             }
                                             //quando arriva qui ha finito!!!
+                                            $("#IspezioniSuServer").removeClass('updating_class');
+                                            $("#IspezioniSuServer").addClass('updated_class');
                                             getClientiListFromServer();
                                         }, function() {
                                             //ERROR!
@@ -375,15 +374,15 @@ function onDeviceReady() {
                     $("#Clienti").addClass('updated_class');
 
                     //ora chiama quella successiva
-                    //getSediClientiListFromServer();
-                    setUltimoAggiornamento('getClientiListFromServer');
+                    getSediClientiListFromServer();
+                    //setUltimoAggiornamento('getClientiListFromServer');
                 }
             );
         }
         );
         //setUltimoAggiornamento('getClientiListFromServer');
     }
-    /*
+
     function getSediClientiListFromServer() {
         console.log("Dentro getSediClientiListFromServer");
 
@@ -427,7 +426,7 @@ function onDeviceReady() {
                         $("#SediClienti").addClass('updated_class');
 
                         //ora chiama quella successiva
-                        getTipiServizioListFromServer();
+                        //getTipiServizioListFromServer();
                     }
                 );
             }
@@ -435,7 +434,8 @@ function onDeviceReady() {
 
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
-    function getTipiServizioListFromServer() {
+    /*
+        function getTipiServizioListFromServer() {
         console.log("Dentro getTipiServizioListFromServer");
 
         $.getJSON(serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento, function (data) {

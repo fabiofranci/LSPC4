@@ -350,36 +350,49 @@ function onDeviceReady() {
             console.log("getClientiListFromServer post success");
 
             clienti_server = data.items;
-            var i=0;
-            $.each(clienti_server, function (index, cliente) {
-                //alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
-                if (i==0) {
-                    rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
-                } else {
-                    rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.tipo+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
-                }
-                i++;
-            });
-            //alert(rigaselect);
-            console.log(rigaselect);
-            //ora può lanciare la transazione
-            db.transaction(
-                function (tx3) { tx3.executeSql(rigaselect); },
-                onDbError,
-                function () {
-                    //alert(i+" clienti inseriti");
-                    $("#homeclienti").html('Clienti: '+i);
 
-                    $("#Clienti").removeClass('updating_class');
-                    $("#Clienti").addClass('updated_class');
+            if (clienti_server.length>0)    {
+                var i=0;
+                $.each(clienti_server, function (index, cliente) {
+                    //alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
+                    if (i==0) {
+                        rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
+                    } else {
+                        rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.tipo+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
+                    }
+                    i++;
+                });
+                //alert(rigaselect);
+                console.log(rigaselect);
+                //ora può lanciare la transazione
+                db.transaction(
+                    function (tx3) { tx3.executeSql(rigaselect); },
+                    onDbError,
+                    function () {
+                        //alert(i+" clienti inseriti");
+                        $("#homeclienti").html('Clienti: '+i);
 
-                    console.log("getClientiListFromServer post success finito");
+                        $("#Clienti").removeClass('updating_class');
+                        $("#Clienti").addClass('updated_class');
 
-                    //ora chiama quella successiva
-                    getSediClientiListFromServer();
-                    //setUltimoAggiornamento('getClientiListFromServer');
-                }
-            );
+                        console.log("getClientiListFromServer post success finito");
+
+                        //ora chiama quella successiva
+                        getSediClientiListFromServer();
+                        //setUltimoAggiornamento('getClientiListFromServer');
+                    }
+                );
+            } else {
+                //nessun dato da inserire nel db
+                $("#Clienti").removeClass('updating_class');
+                $("#Clienti").addClass('updated_class');
+
+                console.log("getClientiListFromServer post success finito");
+
+                //ora chiama quella successiva
+                getSediClientiListFromServer();
+
+            }
         }
         );
         //setUltimoAggiornamento('getClientiListFromServer');

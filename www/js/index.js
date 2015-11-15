@@ -334,14 +334,14 @@ function onDeviceReady() {
     }
 
     function getClientiListFromServer() {
-        alert("Dentro getClientiListFromServer");
         var iclienti=0;
-
+        alert("getClientiListFromServer prima del post");
         $.ajax({
             type: "POST",
             url: serviceURL + 'gettableclienti.php',
             data: {ult: global_ultimo_aggiornamento},
             success:function(data){
+                alert("getClientiListFromServer post success");
                 clienti_server = data.items;
                 var i=0;
                 $.each(clienti_server, function (index, cliente) {
@@ -368,9 +368,10 @@ function onDeviceReady() {
                 );
             },
             error: function () {
-
+                alert("getClientiListFromServer post error");
             }
         });
+        alert("getClientiListFromServer fine funzione");
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {

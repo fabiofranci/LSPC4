@@ -338,7 +338,8 @@ function onDeviceReady() {
         alert("getClientiListFromServer prima del post");
         console.log("getClientiListFromServer prima del post");
         //va messo un please wait e tolto solo alla fine di tutto
-        window.plugins.spinnerDialog.show("title","message", true);
+        $("#menuhome").hide();
+        $("#finestrasincro").show();
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
             alert("getClientiListFromServer post success");
@@ -364,8 +365,10 @@ function onDeviceReady() {
                     alert(i+" clienti inseriti");
                     $("#homeclienti").html('Clienti: '+i);
                     //ora chiama quella successiva
-                    window.plugins.spinnerDialog.hide();
-                    getSediClientiListFromServer();
+                    $("#finestrasincro").hide();
+                    $("#menuhome").show();
+
+                    //getSediClientiListFromServer();
                 }
             );
         }

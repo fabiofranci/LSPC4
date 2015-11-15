@@ -56,18 +56,23 @@
         <a data-iconpos="notext" href="#example" data-role="button" data-icon="flat-menu"></a>
     </div>
     <div data-role="content" role="main">
-        <button id="SCAN" data-icon="flat-menu" data-theme="g">SCAN</button>
-        <br/>
+        <div id="menuhome">
+            <button id="SCAN" data-icon="flat-menu" data-theme="g">SCAN</button>
+            <br/>
 
-        <div data-role="collapsible-set" data-theme="b" data-content-theme="b">
-            <div data-role="collapsible" data-collapsed-icon="flat-time" data-expanded-icon="flat-cross" data-collapsed="false">
-                <h3>Gestione Database</h3>
-                <p id="ultimo_aggiornamento_content"> Verifico il database ... </p>
-                <!--<button id="pulisciDb" data-icon="flat-cross" data-theme="f">AZZERA DB</button>-->
-                <button id="sincronizza" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB</button>
-                <button id="sincronizza_zero" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB DA ZERO</button>
-                <div id="homeclienti">Clienti: -+-+-+-+-+- </div>
+            <div data-role="collapsible-set" data-theme="b" data-content-theme="b">
+                <div data-role="collapsible" data-collapsed-icon="flat-time" data-expanded-icon="flat-cross" data-collapsed="false">
+                    <h3>Gestione Database</h3>
+                    <p id="ultimo_aggiornamento_content"> Verifico il database ... </p>
+                    <!--<button id="pulisciDb" data-icon="flat-cross" data-theme="f">AZZERA DB</button>-->
+                    <button id="sincronizza" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB</button>
+                    <button id="sincronizza_zero" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB DA ZERO</button>
+                    <div id="homeclienti">Clienti: -+-+-+-+-+- </div>
+                </div>
             </div>
+        </div>
+        <div id="finestrasincro" style="display:none;">
+            Sincronizzazione in corso...
         </div>
 
     </div>

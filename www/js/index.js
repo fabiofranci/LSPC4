@@ -179,7 +179,8 @@ function onDeviceReady() {
     }
 
     function sincronizzaDaServer() {
-        alert("Sincronizzo");
+        $("#menuhome").hide();
+        $("#finestrasincro").show();
         var Connessione=checkConnessione();
         if (Connessione) {
             //alert(global_ultimo_aggiornamento);
@@ -193,6 +194,8 @@ function onDeviceReady() {
             //setUltimoAggiornamento();
         } else {
             alert("Nessuna connessione, sincronizzazione non possibile!");
+            $("#menuhome").show();
+            $("#finestrasincro").hide();
         }
     }
 
@@ -338,8 +341,6 @@ function onDeviceReady() {
         alert("getClientiListFromServer prima del post");
         console.log("getClientiListFromServer prima del post");
         //va messo un please wait e tolto solo alla fine di tutto
-        $("#menuhome").hide();
-        $("#finestrasincro").show();
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
             alert("getClientiListFromServer post success");
@@ -347,7 +348,7 @@ function onDeviceReady() {
             clienti_server = data.items;
             var i=0;
             $.each(clienti_server, function (index, cliente) {
-                alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
+                //alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
                 if (i==0) {
                     rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
                 } else {
@@ -364,9 +365,13 @@ function onDeviceReady() {
                 function () {
                     alert(i+" clienti inseriti");
                     $("#homeclienti").html('Clienti: '+i);
+
+                    $("#Clienti").removeClass('updating_class');
+                    $("#Clienti").addClass('updated_class');
+
                     //ora chiama quella successiva
-                    $("#finestrasincro").hide();
-                    $("#menuhome").show();
+                    //$("#finestrasincro").hide();
+                    //$("#menuhome").show();
 
                     //getSediClientiListFromServer();
                 }

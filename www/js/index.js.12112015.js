@@ -148,7 +148,7 @@ function onDeviceReady() {
 
 
     //-------------------------------------------------
-    // GESTIONE CONNESSIONE
+    // GESTIONE CONNESSIONE //per ora non funziona
     //-------------------------------------------------
     function checkConnessione() {
         try {
@@ -179,18 +179,18 @@ function onDeviceReady() {
     }
 
     function sincronizzaDaServer() {
-        alert("Sincronizzo");
+
         var Connessione=checkConnessione();
         if (Connessione) {
             //alert(global_ultimo_aggiornamento);
             AggiornaSuServer();
-            //getClientiListFromServer();
-            //getSediClientiListFromServer();
-            //getTipiServizioListFromServer();
-            //getPostazioniListFromServer();
-            //getVisiteListFromServer();
-            //getIspezioniListFromServer();
-            //setUltimoAggiornamento();
+            getClientiListFromServer();
+            getSediClientiListFromServer();
+            getTipiServizioListFromServer();
+            getPostazioniListFromServer();
+            getVisiteListFromServer();
+            getIspezioniListFromServer();
+            setUltimoAggiornamento();
         } else {
             alert("Nessuna connessione, sincronizzazione non possibile!");
         }
@@ -257,7 +257,6 @@ function onDeviceReady() {
         //alert("Ultimo aggiornamento:"+ultimoagg);
         //POSTAZIONI
         db.transaction(function (tx2) {
-            alert("Postazioni verso il server");
             tx2.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                     var len = dati.rows.length, i;
                     if (len>0) {
@@ -276,58 +275,49 @@ function onDeviceReady() {
                     } else {
                         //alert("Niente postazioni locali da aggiornare");
                     }
-                    //quando arriva qui ha finito!!!
-                    //VISITE
-                    db.transaction(function (tx2) {
-                        alert("Visite verso il server");
-                        tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
-                                var len = dati.rows.length, i;
-                                if (len>0) {
-                                    for (i = 0; i < len; i++){
-                                        //alert("Visita:"+dati.rows.item(i).codice_visita);
-                                        //alert("Ultimo aggiornamento visita:"+dati.rows.item(i).ultimo_aggiornamento);
-                                        var obj=dati.rows.item(i);
-                                        $.post( serviceURL + 'settablevisite.php', obj)
-                                            .done(function( data ) {
-                                                //alert('Aggiornate Visite Sul Server');
-                                            });
-                                    }
-                                } else {
-                                    //alert("Niente visite locali da aggiornare");
-                                }
-                                //quando arriva qui ha finito!!!
-                                //ISPEZIONI
-                                db.transaction(function (tx2) {
-                                    alert("Ispezioni verso il server");
-                                    tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
-                                            var len = dati.rows.length, i;
-                                            if (len>0) {
-                                                for (i = 0; i < len; i++){
-                                                    //alert("Ispezione:"+dati.rows.item(i).codice_ispezione);
-                                                    //alert("Ultimo aggiornamento ispezione:"+dati.rows.item(i).ultimo_aggiornamento);
-                                                    var obj=dati.rows.item(i);
-                                                    $.post( serviceURL + 'settableispezioni.php', obj)
-                                                        .done(function( data ) {
-                                                            //alert('Aggiornate Ispezioni Sul Server');
-                                                        });
-                                                }
-                                            } else {
-                                                //alert("Niente ispezioni locali da aggiornare");
-                                            }
-                                            //quando arriva qui ha finito!!!
-                                            getClientiListFromServer();
-                                        }, function() {
-                                            //ERROR!
-                                        }
-                                    );
-                                });
-                            }, function() {
-                                //ERROR!
-                            }
-                        );
-                    });
                 }, function() {
-                    //ERROR!
+                }
+            );
+        });
+        //VISITE
+        db.transaction(function (tx2) {
+            tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
+                    var len = dati.rows.length, i;
+                    if (len>0) {
+                        for (i = 0; i < len; i++){
+                            //alert("Visita:"+dati.rows.item(i).codice_visita);
+                            //alert("Ultimo aggiornamento visita:"+dati.rows.item(i).ultimo_aggiornamento);
+                            var obj=dati.rows.item(i);
+                            $.post( serviceURL + 'settablevisite.php', obj)
+                                .done(function( data ) {
+                                    //alert('Aggiornate Visite Sul Server');
+                                });
+                        }
+                    } else {
+                        //alert("Niente visite locali da aggiornare");
+                    }
+                }, function() {
+                }
+            );
+        });
+        //ISPEZIONI
+        db.transaction(function (tx2) {
+            tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
+                    var len = dati.rows.length, i;
+                    if (len>0) {
+                        for (i = 0; i < len; i++){
+                            //alert("Ispezione:"+dati.rows.item(i).codice_ispezione);
+                            //alert("Ultimo aggiornamento ispezione:"+dati.rows.item(i).ultimo_aggiornamento);
+                            var obj=dati.rows.item(i);
+                            $.post( serviceURL + 'settableispezioni.php', obj)
+                                .done(function( data ) {
+                                    //alert('Aggiornate Ispezioni Sul Server');
+                                });
+                        }
+                    } else {
+                        //alert("Niente ispezioni locali da aggiornare");
+                    }
+                }, function() {
                 }
             );
         });
@@ -335,287 +325,136 @@ function onDeviceReady() {
 
     function getClientiListFromServer() {
         var iclienti=0;
-        alert("getClientiListFromServer prima del post");
-
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
-            alert("getClientiListFromServer post success");
-
             clienti_server = data.items;
-            var i=0;
             $.each(clienti_server, function (index, cliente) {
-                alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
-                if (i==0) {
-                    rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
-                } else {
-                    rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
-                }
+                db.transaction(
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note ) VALUES (?,?,?,?,?,?,?,?,?)", [cliente.id, cliente.nome_o_ragione_sociale, cliente.partita_iva, cliente.codice_fiscale, cliente.tipo, cliente.persona_di_riferimento, cliente.telefono, cliente.email, cliente.note]); },
+                    function () { alert(cliente.nome_o_ragione_sociale + " non inserito"); },
+                    function () { iclienti++;$("#homeclienti").html('Clienti: '+iclienti);
+                        //alert(cliente.nome_o_ragione_sociale + " inserito");
+                    }
+                );
             });
-            alert(rigaselect);
-            //console.log(rigaselect);
-            //ora può lanciare la transazione
-            db.transaction(
-                function (tx3) { tx3.executeSql(rigaselect); },
-                function () {
-                    alert("errore inserimento clienti");
-                },
-                function () {
-                    //alert("ispezioni inserite");
-                    //ora chiama quella successiva
-                    getSediClientiListFromServer();
-                }
-            );
-        }
         });
-        alert("getClientiListFromServer fine funzione");
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {
-        alert("Dentro getSediClientiListFromServer");
-
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                sedi_clienti_server = data.items;
-                var i=0;
-                $.each(sedi_clienti_server, function (index, cliente) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_SEDI_CLIENTI (id, cliente_e_sede, sede, indirizzo, CAP, citta, provincia, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.cliente_e_sede+"' AS cliente_e_sede, '"+cliente.sede+"' as sede, '"+cliente.indirizzo+"' AS indirizzo,'"+cliente.CAP+"' AS CAP, '"+cliente.citta+"' AS citta,'"+cliente.provincia+"' AS provincia, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+clienti.id+"','"+clienti.cliente_e_sede+"','"+clienti.sede+"','"+clienti.indirizzo+"','"+clienti.CAP+"','"+clienti.citta+"','"+clienti.provincia+"','"+clienti.persona_di_riferimento+"','"+clienti.telefono+"','"+clienti.email+"','"+clienti.note+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
+            sedi_clienti_server = data.items;
+            $.each(sedi_clienti_server, function (index, cliente) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento sedi clienti");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
-                        db.transaction(function (tx) {
-                            tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
-                                    var len = results.rows.length, i;
-                                    for (i = 0; i < len; i++){
-                                        cliente_e_sede=results.rows.item(i).cliente_e_sede;
-                                        id_sede=results.rows.item(i).id;
-                                        sedi[id_sede]=cliente_e_sede;
-                                        //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
-                                    }
-                                }, function() {
-                                }
-                            );
-                        });
-                        //ora può lanciare quella successiva
-                        getTipiServizioListFromServer();
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_SEDI_CLIENTI (id, cliente_e_sede, sede, indirizzo, CAP, citta, provincia, persona_di_riferimento, telefono, email, note ) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [cliente.id, cliente.cliente_e_sede, cliente.sede, cliente.indirizzo, cliente.CAP, cliente.citta, cliente.provincia, cliente.persona_di_riferimento, cliente.telefono, cliente.email, cliente.note]); },
+                    function () { alert(cliente.cliente_e_sede + " non inserito"); },
+                    function () { //alert(cliente.cliente_e_sede + " inserito");
                     }
                 );
-            },
-            error: function () {
-
-            }
+            });
+        }).done(function(){
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
+                        var len = results.rows.length, i;
+                        for (i = 0; i < len; i++){
+                            cliente_e_sede=results.rows.item(i).cliente_e_sede;
+                            id_sede=results.rows.item(i).id;
+                            sedi[id_sede]=cliente_e_sede;
+                            //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+                        }
+                    }, function() {
+                    }
+                );
+            });
         });
-
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
     function getTipiServizioListFromServer() {
-        alert("Dentro getTipiServizioListFromServer");
-
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                tipi_servizio_server = data.items;
-                var i=0;
-                $.each(tipi_servizio_server, function (index, tiposervizio) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) SELECT '"+tiposervizio.id+"' AS id, '"+tiposervizio.servizio+"' AS servizio, '"+tiposervizio.descrizione_servizio+"' as descrizione_servizio  ";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+tiposervizio.id+"','"+tiposervizio.servizio+"','"+tiposervizio.descrizione_servizio+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento, function (data) {
+            tipi_servizio_server = data.items;
+            $.each(tipi_servizio_server, function (index, tiposervizio) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento tipi servizio");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
-                        db.transaction(function (tx) {
-                            tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
-                                    var len = results.rows.length, i;
-                                    for (i = 0; i < len; i++){
-                                        var id_servizio=results.rows.item(i).id;
-                                        descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
-                                        tipiservizio[id_servizio]=results.rows.item(i).servizio;
-                                        //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
-                                    }
-                                }, function() {
-                                }
-                            );
-                        });
-                        //ora può lanciare quella successiva
-                        getPostazioniListFromServer();
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) VALUES (?,?,?)", [tiposervizio.id, tiposervizio.servizio, tiposervizio.descrizione_servizio]); },
+                    function () { alert(tiposervizio.servizio + " non inserito"); },
+                    function () { //alert(tiposervizio.servizio + " inserito");
                     }
                 );
-            },
-            error: function () {
-
-            }
+            });
+        });
+        //setUltimoAggiornamento('getTipiServizioListFromServer');
+        db.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
+                    var len = results.rows.length, i;
+                    for (i = 0; i < len; i++){
+                        var id_servizio=results.rows.item(i).id;
+                        descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
+                        tipiservizio[id_servizio]=results.rows.item(i).servizio;
+                        //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
+                    }
+                }, function() {
+                }
+            );
         });
 
     }
     function getPostazioniListFromServer() {
-        alert("Dentro getPostazioniListFromServer");
-
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                postazioni_server = data.items;
-                var i=0;
-                $.each(postazioni_server, function (index, postazione) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO LOCAL_POSTAZIONI (id_sede, id_servizio, codice_postazione, nome) SELECT '"+postazione.id_sede+"' AS id_sede, '"+postazione.id_servizio+"' AS id_servizio, '"+postazione.codice_postazione+"' as codice_postazione, '"+postazione.nome+"' AS nome";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+postazione.id_sede+"','"+postazione.id_servizio+"','"+postazione.codice_postazione+"','"+postazione.nome+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento, function (data) {
+            postazioni_server = data.items;
+            $.each(postazioni_server, function (index, postazione) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento postazioni");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora chiama quella successiva
-                        getVisiteListFromServer();
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_POSTAZIONI (id_sede, id_servizio, codice_postazione, nome) VALUES (?,?,?,?)", [postazione.id_sede, postazione.id_servizio, postazione.codice_postazione, postazione.nome]); },
+                    function () { alert(postazione.codice_postazione + " non inserito"); },
+                    function () { //alert(postazione.nome + " inserito");
                     }
                 );
-            },
-            error: function () {
-
-            }
+            });
         });
+        setUltimoAggiornamento('getPostazioniListFromServer');
     }
     function getVisiteListFromServer() {
-        alert("Dentro getVisiteListFromServer");
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                visite_server = data.items;
-                var i=0;
-                $.each(visite_server, function (index, visita) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) SELECT '"+visita.codice_visita+"' AS codice_visita, '"+visita.id_sede+"' AS id_sede, '"+visita.id_dipendente+"' as id_dipendente, '"+visita.data_inizio_visita+"' AS data_inizio_visita, '"+visita.data_fine_visita+"' as data_fine_visita, '"+visita.stato_visita+"' AS stato_visita";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+visita.codice_visita+"','"+visita.id_sede+"','"+visita.id_dipendente+"','"+visita.data_inizio_visita+"','"+visita.data_fine_visita+"','"+visita.stato_visita+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento, function (data) {
+            visite_server = data.items;
+            $.each(visite_server, function (index, visita) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento visite");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora chiama quella successiva
-                        getIspezioniListFromServer();
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_VISITE (codice_visita, id_sede, id_dipendente, data_inizio_visita, data_fine_visita, stato_visita) VALUES (?,?,?,?,?,?)", [visita.codice_visita, visita.id_sede, visita.id_dipendente, visita.data_inizio_visita, visita.data_fine_visita, visita.stato_visita]); },
+                    function () { alert("visita "+visita.codice_visita + " non inserita"); },
+                    function () { //alert("visita "+visita.id + " inserita");
                     }
                 );
-            },
-            error: function () {
-
-            }
+            });
         });
+        //setUltimoAggiornamento('getVisiteListFromServer');
     }
     function getIspezioniListFromServer() {
-
-        alert("Dentro getIspezioniListFromServer");
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                ispezioni_server = data.items;
-                var i=0;
-                $.each(ispezioni_server, function (index, isp) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione, codice_postazione, codice_visita, data_ispezione, stato_postazione, stato_esca_roditori, collocato_adescante_roditori, stato_piastra_collante_insetti_striscianti, ooteche_orientalis, adulti_orientalis, ooteche_germanica, adulti_germanica, ooteche_supella_longipalpa, adulti_supella_longipalpa, ooteche_periplaneta_americana, adulti_periplaneta_americana, stato_piastra_insetti_volanti, presenza_muscidi, presenza_imenotteri_vespidi, presenza_imenotteri_calabronidi, presenza_dittere, presenza_altri_tipi_insetti, note_per_cliente, nutrie_tana, nutrie_target, presenza_target_lepidotteri, tipo_target_lepidotteri, latitudine, longitudine, ultimo_aggiornamento) SELECT '"+isp.codice_ispezione+"' AS codice_ispezione, '"+isp.codice_postazione+"' AS codice_postazione, '"+isp.codice_visita+"' AS codice_visita, '"+isp.data_ispezione+"' AS data_ispezione, '"+isp.stato_postazione+"' AS stato_postazione, '"+isp.stato_esca_roditori+"' AS stato_esca_roditori, '"+isp.collocato_adescante_roditori+"' AS collocato_adescante_roditori, '"+isp.stato_piastra_collante_insetti_striscianti+"' AS stato_piastra_collante_insetti_striscianti, '"+isp.ooteche_orientalis+"' AS ooteche_orientalis, '"+isp.adulti_orientalis+"' AS adulti_orientalis, '"+isp.ooteche_germanica+"' AS ooteche_germanica, '"+isp.adulti_germanica+"' AS adulti_germanica, '"+isp.ooteche_supella_longipalpa+"' AS ooteche_supella_longipalpa, '"+isp.adulti_supella_longipalpa+"' AS adulti_supella_longipalpa, '"+isp.ooteche_periplaneta_americana+"' AS ooteche_periplaneta_americana, '"+isp.adulti_periplaneta_americana+"' AS adulti_periplaneta_americana, '"+isp.stato_piastra_insetti_volanti+"' AS stato_piastra_insetti_volanti, '"+isp.presenza_muscidi+"' AS presenza_muscidi, '"+isp.presenza_imenotteri_vespidi+"' AS presenza_imenotteri_vespidi, '"+isp.presenza_imenotteri_calabronidi+"' AS presenza_imenotteri_calabronidi, '"+isp.presenza_dittere+"' AS presenza_dittere, '"+isp.presenza_altri_tipi_insetti+"' AS presenza_altri_tipi_insetti, '"+isp.note_per_cliente+"' AS note_per_cliente, '"+isp.nutrie_tana+"' AS nutrie_tana, '"+isp.nutrie_target+"' AS nutrie_target, '"+isp.presenza_target_lepidotteri+"' AS presenza_target_lepidotteri, '"+isp.tipo_target_lepidotteri+"' AS tipo_target_lepidotteri, '"+isp.latitudine+"' AS latitudine, '"+isp.longitudine+"' AS longitudine, '"+isp.ultimo_aggiornamento+"' AS ultimo_aggiornamento";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+isp.codice_ispezione+"', '"+isp.codice_postazione+"', '"+isp.codice_visita+"', '"+isp.data_ispezione+"', '"+isp.stato_postazione+"', '"+isp.stato_esca_roditori+"', '"+isp.collocato_adescante_roditori+"', '"+isp.stato_piastra_collante_insetti_striscianti+"', '"+isp.ooteche_orientalis+"', '"+isp.adulti_orientalis+"', '"+isp.ooteche_germanica+"', '"+isp.adulti_germanica+"', '"+isp.ooteche_supella_longipalpa+"', '"+isp.adulti_supella_longipalpa+"', '"+isp.ooteche_periplaneta_americana+"', '"+isp.adulti_periplaneta_americana+"', '"+isp.stato_piastra_insetti_volanti+"', '"+isp.presenza_muscidi+"', '"+isp.presenza_imenotteri_vespidi+"', '"+isp.presenza_imenotteri_calabronidi+"', '"+isp.presenza_dittere+"', '"+isp.presenza_altri_tipi_insetti+"', '"+isp.note_per_cliente+"', '"+isp.nutrie_tana+"', '"+isp.nutrie_target+"', '"+isp.presenza_target_lepidotteri+"', '"+isp.tipo_target_lepidotteri+"', '"+isp.latitudine+"', '"+isp.longitudine+"', '"+isp.ultimo_aggiornamento+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento, function (data) {
+            ispezioni_server = data.items;
+            $.each(ispezioni_server, function (index, isp) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento ispezioni");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora chiama quella successiva
-                        getUsersListFromServer();
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_ISPEZIONI (codice_ispezione, codice_postazione, codice_visita, data_ispezione, stato_postazione, stato_esca_roditori, collocato_adescante_roditori, stato_piastra_collante_insetti_striscianti, ooteche_orientalis, adulti_orientalis, ooteche_germanica, adulti_germanica, ooteche_supella_longipalpa, adulti_supella_longipalpa, ooteche_periplaneta_americana, adulti_periplaneta_americana, stato_piastra_insetti_volanti, presenza_muscidi, presenza_imenotteri_vespidi, presenza_imenotteri_calabronidi, presenza_dittere, presenza_altri_tipi_insetti, note_per_cliente, nutrie_tana, nutrie_target, presenza_target_lepidotteri, tipo_target_lepidotteri, latitudine, longitudine, ultimo_aggiornamento) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [isp.codice_ispezione, isp.codice_postazione, isp.codice_visita, isp.data_ispezione, isp.stato_postazione, isp.stato_esca_roditori, isp.collocato_adescante_roditori, isp.stato_piastra_collante_insetti_striscianti, isp.ooteche_orientalis, isp.adulti_orientalis, isp.ooteche_germanica, isp.adulti_germanica, isp.ooteche_supella_longipalpa, isp.adulti_supella_longipalpa, isp.ooteche_periplaneta_americana, isp.adulti_periplaneta_americana, isp.stato_piastra_insetti_volanti, isp.presenza_muscidi, isp.presenza_imenotteri_vespidi, isp.presenza_imenotteri_calabronidi, isp.presenza_dittere, isp.presenza_altri_tipi_insetti, isp.note_per_cliente, isp.nutrie_tana, isp.nutrie_target, isp.presenza_target_lepidotteri, isp.tipo_target_lepidotteri, isp.latitudine, isp.longitudine, isp.ultimo_aggiornamento]); },
+                    function () { alert("ispezione "+isp.codice_ispezione + " non inserita"); },
+                    function () { //alert("ispezione "+isp.id + " inserita");
                     }
                 );
-            },
-            error: function () {
-
-            }
+            });
         });
         //setUltimoAggiornamento('getIspezioniListFromServer');
     }
     function getUsersListFromServer() {
-        alert("Dentro getUsersListFromServer");
-
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                users_server = data.items;
-                var i=0;
-                $.each(users_server, function (index, user) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) SELECT '"+user.id+"' AS id, '"+user.id_ruolo+"' AS id_ruolo, '"+user.id+"' as PIN, '"+user.Nome+"' AS Nome, '"+user.Cognome+"' as Cognome, '"+user.email+"' AS email";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+user.id+"','"+user.id_ruolo+"','"+user.PIN+"','"+user.Nome+"','"+user.Cognome+"','"+user.email+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
+        $.getJSON(serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento, function (data) {
+            users_server = data.items;
+            $.each(users_server, function (index, user) {
                 db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento visite");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora chiama quella successiva
-                        setUltimoAggiornamento('getUsersListFromServer');
+                    function (tx) { tx.executeSql("INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) VALUES (?,?,?,?,?,?)", [user.id, user.id_ruolo, user.PIN, user.Nome, user.Cognome, user.email]); },
+                    function () { alert("user "+user.id + " non inserito"); },
+                    function () { //alert("user "+user.id + " inserito");
                     }
                 );
-            },
-            error: function () {
-
-            }
+                for (var i in users_server) {
+                    var utente=users_server[i];
+                    users[utente.id]=utente.nome+' '+utente.cognome;
+                    //alert(cliente.id+' -> '+cliente.cliente_e_sede);
+                }
+            });
         });
-
+        setUltimoAggiornamento('getUsersListFromServer');
     }
 
     function setUltimoAggiornamento(msg) {
@@ -625,10 +464,9 @@ function onDeviceReady() {
             function (tx) { tx.executeSql("INSERT OR REPLACE INTO LOCAL_ULTIMOAGGIORNAMENTO (id,ultimo_aggiornamento) VALUES (?,?)", [1,global_ultimo_aggiornamento]); },
             function () { alert("ultimo aggiornamento non inserito"); },
             function () { //alert("ispezione "+isp.id + " inserita");
-                $("#ultimo_aggiornamento_content").html('Ultimo aggiornamento:<br/>'+global_ultimo_aggiornamento);
             }
         );
-
+        $("#ultimo_aggiornamento_content").html('Ultimo aggiornamento:<br/>'+global_ultimo_aggiornamento);
     }
 
     // (i) Cerca Postazione
@@ -862,7 +700,7 @@ function onDeviceReady() {
                                     }
                                     var AggiornamentiIspezioni=true;
                                 }
-                                //alert(rigaselect);
+                                alert(rigaselect);
                                 db.transaction(
                                     function (tx3) { tx3.executeSql(rigaselect); },
                                     function () { alert("errore inserimento ");
@@ -1153,6 +991,7 @@ function onDeviceReady() {
             //alert("Visita non definita!");
         }
     });
+
 
     $(document).on("pagebeforeshow","#fine_visita",function(){
         if($('#fcmsig').find('.jSignature').length == 0){
@@ -1467,14 +1306,14 @@ function onDeviceReady() {
                     for (i = 0; i < len; i++){
                         global_ultimo_aggiornamento=results.rows.item(i).ultimo_aggiornamento;
                         sincronizzaDaServer();
-                        //InizializzaArray();
+                        InizializzaArray();
                         //alert ("ultimoaggiornamento in db: "+global_ultimo_aggiornamento);
                     }
                 }, function() {
                     alert("Creo db");
                     db.transaction(creoDb, onDbError, onDbOpenSuccess);
                     sincronizzaDaServer();
-                    //InizializzaArray();
+                    InizializzaArray();
                 }
             );
         });

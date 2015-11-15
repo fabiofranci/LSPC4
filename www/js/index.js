@@ -362,6 +362,7 @@ function onDeviceReady() {
                 onDbError,
                 function () {
                     alert(i+" clienti inseriti");
+                    $("#homeclienti").html('Clienti: '+i);
                     //ora chiama quella successiva
                     window.plugins.spinnerDialog.hide();
                     getSediClientiListFromServer();

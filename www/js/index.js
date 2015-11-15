@@ -338,7 +338,7 @@ function onDeviceReady() {
         alert("getClientiListFromServer prima del post");
         console.log("getClientiListFromServer prima del post");
         //va messo un please wait e tolto solo alla fine di tutto
-
+        window.plugins.spinnerDialog.show("title","message", true);
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
             alert("getClientiListFromServer post success");
@@ -363,6 +363,7 @@ function onDeviceReady() {
                 function () {
                     alert(i+" clienti inseriti");
                     //ora chiama quella successiva
+                    window.plugins.spinnerDialog.hide();
                     getSediClientiListFromServer();
                 }
             );

@@ -252,7 +252,6 @@ function onDeviceReady() {
 
     function AggiornaSuServer() {
         //mando sul server i dati da aggiornare
-        window.plugins.spinnerDialog.show("Aggiornamento","Attendere prego...", true);
         ultimoagg=global_ultimo_aggiornamento;
         if (global_ultimo_aggiornamento=='') { ultimoagg='0000-00-00'; }
         //alert("Ultimo aggiornamento:"+ultimoagg);
@@ -337,6 +336,7 @@ function onDeviceReady() {
     function getClientiListFromServer() {
         var iclienti=0;
         alert("getClientiListFromServer prima del post");
+        console.log("getClientiListFromServer prima del post");
         //va messo un please wait e tolto solo alla fine di tutto
 
 
@@ -362,7 +362,6 @@ function onDeviceReady() {
                 onDbError,
                 function () {
                     alert(i+" clienti inseriti");
-                    window.plugins.spinnerDialog.hide();
                     //ora chiama quella successiva
                     getSediClientiListFromServer();
                 }

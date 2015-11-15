@@ -352,7 +352,7 @@ function onDeviceReady() {
                 i++;
             });
             alert(rigaselect);
-            //console.log(rigaselect);
+            console.log(rigaselect);
             //ora può lanciare la transazione
             db.transaction(
                 function (tx3) { tx3.executeSql(rigaselect); },

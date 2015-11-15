@@ -284,7 +284,7 @@ function onDeviceReady() {
                     //quando arriva qui ha finito!!!
                     //VISITE
                     db.transaction(function (tx2) {
-                        alert("Visite verso il server");
+                        console.log("Visite verso il server");
                         tx2.executeSql('SELECT * FROM LOCAL_VISITE WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                                 var len = dati.rows.length, i;
                                 if (len>0) {
@@ -304,7 +304,7 @@ function onDeviceReady() {
                                 $("#VisiteSuServer").addClass('updated_class');
                                 //ISPEZIONI
                                 db.transaction(function (tx2) {
-                                    alert("Ispezioni verso il server");
+                                    console.log("Ispezioni verso il server");
                                     tx2.executeSql('SELECT * FROM LOCAL_ISPEZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                                             var len = dati.rows.length, i;
                                             if (len>0) {

@@ -348,22 +348,23 @@ function onDeviceReady() {
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
             console.log("getClientiListFromServer post success");
+            rigaselect='';
 
             clienti_server = data.items;
 
-            if (clienti_server.length>0)    {
-                var i=0;
-                $.each(clienti_server, function (index, cliente) {
-                    //alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.tipo+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
-                    }
-                    i++;
-                });
-                //alert(rigaselect);
-                console.log(rigaselect);
+            var i=0;
+            $.each(clienti_server, function (index, cliente) {
+                //alert('cliente numero '+i+' --> id='+cliente.id+' nome='+cliente.nome_o_ragione_sociale);
+                if (i==0) {
+                    rigaselect="INSERT OR REPLACE INTO SERVER_CLIENTI (id, nome_o_ragione_sociale, partita_iva, codice_fiscale, tipo, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.nome_o_ragione_sociale+"' AS nome_o_ragione_sociale, '"+cliente.partita_iva+"' as partita_iva, '"+cliente.codice_fiscale+"' AS codice_fiscale,'"+cliente.tipo+"' AS tipo, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
+                } else {
+                    rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.tipo+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
+                }
+                i++;
+            });
+            //alert(rigaselect);
+            console.log(rigaselect);
+            if (rigaselect) {
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
@@ -378,6 +379,7 @@ function onDeviceReady() {
                         console.log("getClientiListFromServer post success finito");
 
                         //ora chiama quella successiva
+                        alert("chiamerei getSediClientiListFromServer 1");
                         getSediClientiListFromServer();
                         //setUltimoAggiornamento('getClientiListFromServer');
                     }
@@ -390,6 +392,7 @@ function onDeviceReady() {
                 console.log("getClientiListFromServer post success finito");
 
                 //ora chiama quella successiva
+                alert("chiamerei getSediClientiListFromServer 2");
                 getSediClientiListFromServer();
 
             }
@@ -403,7 +406,7 @@ function onDeviceReady() {
 
         $.getJSON(serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
                 console.log("getSediClientiListFromServer post success");
-
+                rigaselect='';
                 sedi_clienti_server = data.items;
                 var i=0;
                 $.each(sedi_clienti_server, function (index, cliente) {
@@ -416,34 +419,42 @@ function onDeviceReady() {
                 });
                 //alert(rigaselect);
                 console.log(rigaselect);
-                //ora può lanciare la transazione
-                db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    onDbError,
-                    function () {
-                        //alert(i+" clienti inseriti");
+                if (rigaselect) {
+                    //ora può lanciare la transazione
+                    db.transaction(
+                        function (tx3) { tx3.executeSql(rigaselect); },
+                        onDbError,
+                        function () {
+                            //alert(i+" clienti inseriti");
 
-                        db.transaction(function (tx) {
-                            tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
-                                    var len = results.rows.length, i;
-                                    for (i = 0; i < len; i++){
-                                        cliente_e_sede=results.rows.item(i).cliente_e_sede;
-                                        id_sede=results.rows.item(i).id;
-                                        sedi[id_sede]=cliente_e_sede;
-                                        //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+                            db.transaction(function (tx) {
+                                tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
+                                        var len = results.rows.length, i;
+                                        for (i = 0; i < len; i++){
+                                            cliente_e_sede=results.rows.item(i).cliente_e_sede;
+                                            id_sede=results.rows.item(i).id;
+                                            sedi[id_sede]=cliente_e_sede;
+                                            //alert("Inserisco in sede numero:"+id_sede+" sede:"+cliente_e_sede);
+                                        }
+                                    }, function() {
                                     }
-                                }, function() {
-                                }
-                            );
-                        });
+                                );
+                            });
 
-                        $("#SediClienti").removeClass('updating_class');
-                        $("#SediClienti").addClass('updated_class');
-
-                        //ora chiama quella successiva
-                        //getTipiServizioListFromServer();
-                    }
-                );
+                            $("#SediClienti").removeClass('updating_class');
+                            $("#SediClienti").addClass('updated_class');
+                            alert("chiamerei tiposervizio 1");
+                            //ora chiama quella successiva
+                            //getTipiServizioListFromServer();
+                        }
+                    );
+                } else {
+                    $("#SediClienti").removeClass('updating_class');
+                    $("#SediClienti").addClass('updated_class');
+                    //ora chiama quella successiva
+                    alert("chiamerei tiposervizio 2");
+                    //getTipiServizioListFromServer();
+                }
             }
         );
 

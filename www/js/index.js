@@ -365,7 +365,7 @@ function onDeviceReady() {
                 }
             );
         }
-        });
+        );
         alert("getClientiListFromServer fine funzione");
         //setUltimoAggiornamento('getClientiListFromServer');
     }

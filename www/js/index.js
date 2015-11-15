@@ -336,6 +336,8 @@ function onDeviceReady() {
     function getClientiListFromServer() {
         var iclienti=0;
         alert("getClientiListFromServer prima del post");
+        //va messo un please wait e tolto solo alla fine di tutto
+
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
             alert("getClientiListFromServer post success");
@@ -351,14 +353,12 @@ function onDeviceReady() {
                 }
                 i++;
             });
-            alert(rigaselect);
+            //alert(rigaselect);
             console.log(rigaselect);
             //ora può lanciare la transazione
             db.transaction(
                 function (tx3) { tx3.executeSql(rigaselect); },
-                function () {
-                    alert("errore inserimento clienti");
-                },
+                onDbError,
                 function () {
                     alert(i+" clienti inseriti");
                     //ora chiama quella successiva

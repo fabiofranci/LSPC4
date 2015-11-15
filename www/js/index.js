@@ -260,7 +260,7 @@ function onDeviceReady() {
         //alert("Ultimo aggiornamento:"+ultimoagg);
         //POSTAZIONI
         db.transaction(function (tx2) {
-            alert("Postazioni verso il server");
+            console.log("Postazioni verso il server");
             tx2.executeSql('SELECT * FROM LOCAL_POSTAZIONI WHERE ultimo_aggiornamento>?', [ultimoagg], function (tx2, dati) {
                     var len = dati.rows.length, i;
                     if (len>0) {
@@ -270,6 +270,8 @@ function onDeviceReady() {
                             var obj=dati.rows.item(i);
                             $.post( serviceURL + 'settablepostazioni.php', obj)
                                 .done(function( data ) {
+                                    $("#PostazioniSuServer").removeClass('updating_class');
+                                    $("#PostazioniSuServer").addClass('updated_class');
                                     //alert('Aggiornate Postazioni Sul Server');
                                 });
                             //for (var prop in obj) {
@@ -292,7 +294,9 @@ function onDeviceReady() {
                                         var obj=dati.rows.item(i);
                                         $.post( serviceURL + 'settablevisite.php', obj)
                                             .done(function( data ) {
-                                                //alert('Aggiornate Visite Sul Server');
+                                                $("#VisiteSuServer").removeClass('updating_class');
+                                                $("#VisiteSuServer").addClass('updated_class');
+
                                             });
                                     }
                                 } else {
@@ -311,7 +315,8 @@ function onDeviceReady() {
                                                     var obj=dati.rows.item(i);
                                                     $.post( serviceURL + 'settableispezioni.php', obj)
                                                         .done(function( data ) {
-                                                            //alert('Aggiornate Ispezioni Sul Server');
+                                                            $("#IspezioniSuServer").removeClass('updating_class');
+                                                            $("#IspezioniSuServer").addClass('updated_class');
                                                         });
                                                 }
                                             } else {
@@ -338,12 +343,12 @@ function onDeviceReady() {
 
     function getClientiListFromServer() {
         var iclienti=0;
-        alert("getClientiListFromServer prima del post");
+        //alert("getClientiListFromServer prima del post");
         console.log("getClientiListFromServer prima del post");
         //va messo un please wait e tolto solo alla fine di tutto
 
         $.getJSON(serviceURL + 'gettableclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
-            alert("getClientiListFromServer post success");
+            console.log("getClientiListFromServer post success");
 
             clienti_server = data.items;
             var i=0;
@@ -363,51 +368,45 @@ function onDeviceReady() {
                 function (tx3) { tx3.executeSql(rigaselect); },
                 onDbError,
                 function () {
-                    alert(i+" clienti inseriti");
+                    //alert(i+" clienti inseriti");
                     $("#homeclienti").html('Clienti: '+i);
 
                     $("#Clienti").removeClass('updating_class');
                     $("#Clienti").addClass('updated_class');
 
                     //ora chiama quella successiva
-                    //$("#finestrasincro").hide();
-                    //$("#menuhome").show();
-
-                    //getSediClientiListFromServer();
+                    getSediClientiListFromServer();
                 }
             );
         }
         );
-        alert("getClientiListFromServer fine funzione");
         //setUltimoAggiornamento('getClientiListFromServer');
     }
     function getSediClientiListFromServer() {
-        alert("Dentro getSediClientiListFromServer");
+        console.log("Dentro getSediClientiListFromServer");
 
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
+        $.getJSON(serviceURL + 'gettablesediclienti.php?ult='+global_ultimo_aggiornamento, function (data) {
+                console.log("getSediClientiListFromServer post success");
+
                 sedi_clienti_server = data.items;
                 var i=0;
                 $.each(sedi_clienti_server, function (index, cliente) {
                     if (i==0) {
                         rigaselect="INSERT OR REPLACE INTO SERVER_SEDI_CLIENTI (id, cliente_e_sede, sede, indirizzo, CAP, citta, provincia, persona_di_riferimento, telefono, email, note) SELECT '"+cliente.id+"' AS id, '"+cliente.cliente_e_sede+"' AS cliente_e_sede, '"+cliente.sede+"' as sede, '"+cliente.indirizzo+"' AS indirizzo,'"+cliente.CAP+"' AS CAP, '"+cliente.citta+"' AS citta,'"+cliente.provincia+"' AS provincia, '"+cliente.persona_di_riferimento+"' AS persona_di_riferimento,'"+cliente.telefono+"' AS telefono, '"+cliente.email+"' AS email,'"+cliente.note+"' AS note  ";
                     } else {
-                        rigaselect+=" UNION ALL SELECT '"+clienti.id+"','"+clienti.cliente_e_sede+"','"+clienti.sede+"','"+clienti.indirizzo+"','"+clienti.CAP+"','"+clienti.citta+"','"+clienti.provincia+"','"+clienti.persona_di_riferimento+"','"+clienti.telefono+"','"+clienti.email+"','"+clienti.note+"'";
+                        rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.cliente_e_sede+"','"+cliente.sede+"','"+cliente.indirizzo+"','"+cliente.CAP+"','"+cliente.citta+"','"+cliente.provincia+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
                     }
+                    i++;
                 });
                 //alert(rigaselect);
+                console.log(rigaselect);
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
+                    onDbError,
                     function () {
-                        alert("errore inserimento sedi clienti");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
+                        //alert(i+" clienti inseriti");
+
                         db.transaction(function (tx) {
                             tx.executeSql('SELECT * FROM SERVER_SEDI_CLIENTI', [], function (tx, results) {
                                     var len = results.rows.length, i;
@@ -421,77 +420,75 @@ function onDeviceReady() {
                                 }
                             );
                         });
-                        //ora può lanciare quella successiva
+
+                        $("#SediClienti").removeClass('updating_class');
+                        $("#SediClienti").addClass('updated_class');
+
+                        //ora chiama quella successiva
                         getTipiServizioListFromServer();
                     }
                 );
-            },
-            error: function () {
-
             }
-        });
+        );
 
         //setUltimoAggiornamento('getSediClientiListFromServer');
     }
     function getTipiServizioListFromServer() {
-        alert("Dentro getTipiServizioListFromServer");
+        console.log("Dentro getTipiServizioListFromServer");
 
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                tipi_servizio_server = data.items;
-                var i=0;
-                $.each(tipi_servizio_server, function (index, tiposervizio) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) SELECT '"+tiposervizio.id+"' AS id, '"+tiposervizio.servizio+"' AS servizio, '"+tiposervizio.descrizione_servizio+"' as descrizione_servizio  ";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+tiposervizio.id+"','"+tiposervizio.servizio+"','"+tiposervizio.descrizione_servizio+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
-                db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento tipi servizio");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora faccio inizializzazione array (posso già farla, tanto ho già finito la "sincronizzazione" e posso in parallelo andare avanti con le altre tabelle)
-                        db.transaction(function (tx) {
-                            tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
-                                    var len = results.rows.length, i;
-                                    for (i = 0; i < len; i++){
-                                        var id_servizio=results.rows.item(i).id;
-                                        descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
-                                        tipiservizio[id_servizio]=results.rows.item(i).servizio;
-                                        //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
-                                    }
-                                }, function() {
+        $.getJSON(serviceURL + 'gettabletipiservizio.php?ult='+global_ultimo_aggiornamento, function (data) {
+            console.log("getTipiServizioListFromServer post success");
+
+            tipi_servizio_server = data.items;
+            var i=0;
+            $.each(tipi_servizio_server, function (index, tiposervizio) {
+                if (i==0) {
+                    rigaselect="INSERT OR REPLACE INTO SERVER_TIPI_SERVIZIO (id, servizio, descrizione_servizio) SELECT '"+tiposervizio.id+"' AS id, '"+tiposervizio.servizio+"' AS servizio, '"+tiposervizio.descrizione_servizio+"' as descrizione_servizio  ";
+                } else {
+                    rigaselect+=" UNION ALL SELECT '"+tiposervizio.id+"','"+tiposervizio.servizio+"','"+tiposervizio.descrizione_servizio+"'";
+                }
+                i++;
+            });
+            console.log(rigaselect);
+            //ora può lanciare la transazione
+            db.transaction(
+                function (tx3) { tx3.executeSql(rigaselect); },
+                onDbError,
+                function () {
+                    //alert(i+" clienti inseriti");
+
+                    db.transaction(function (tx) {
+                        tx.executeSql('SELECT * FROM SERVER_TIPI_SERVIZIO', [], function (tx, results) {
+                                var len = results.rows.length, i;
+                                for (i = 0; i < len; i++){
+                                    var id_servizio=results.rows.item(i).id;
+                                    descrizioniservizio[id_servizio]=results.rows.item(i).descrizione_servizio;
+                                    tipiservizio[id_servizio]=results.rows.item(i).servizio;
+                                    //alert("Inserisco in servizio numero:"+id_servizio+" tiposervizio:"+servizio+" e descrizione:"+descrizione_servizio);
                                 }
-                            );
-                        });
-                        //ora può lanciare quella successiva
-                        getPostazioniListFromServer();
-                    }
-                );
-            },
-            error: function () {
+                            }, function() {
+                            }
+                        );
+                    });
 
-            }
-        });
+                    $("#TipiServizio").removeClass('updating_class');
+                    $("#TipiServizio").addClass('updated_class');
+
+                    //ora chiama quella successiva
+                    getPostazioniListFromServer();
+                }
+            );
+        }
+
+
 
     }
     function getPostazioniListFromServer() {
-        alert("Dentro getPostazioniListFromServer");
+        console.log("Dentro getPostazioniListFromServer");
 
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
+        $.getJSON(serviceURL + 'gettablepostazioni.php?ult='+global_ultimo_aggiornamento, function (data) {
+                console.log("getPostazioniListFromServer post success");
+
                 postazioni_server = data.items;
                 var i=0;
                 $.each(postazioni_server, function (index, postazione) {
@@ -500,33 +497,32 @@ function onDeviceReady() {
                     } else {
                         rigaselect+=" UNION ALL SELECT '"+postazione.id_sede+"','"+postazione.id_servizio+"','"+postazione.codice_postazione+"','"+postazione.nome+"'";
                     }
+                    i++;
                 });
                 //alert(rigaselect);
+                console.log(rigaselect);
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
+                    onDbError,
                     function () {
-                        alert("errore inserimento postazioni");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
+                        //alert(i+" clienti inseriti");
+
+                        $("#Postazioni").removeClass('updating_class');
+                        $("#Postazioni").addClass('updated_class');
+
                         //ora chiama quella successiva
                         getVisiteListFromServer();
                     }
                 );
-            },
-            error: function () {
-
             }
-        });
+        );
     }
     function getVisiteListFromServer() {
-        alert("Dentro getVisiteListFromServer");
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
+        console.log("Dentro getVisiteListFromServer");
+        $.getJSON(serviceURL + 'gettablevisite.php?ult='+global_ultimo_aggiornamento, function (data) {
+                console.log("getVisiteListFromServer post success");
+
                 visite_server = data.items;
                 var i=0;
                 $.each(visite_server, function (index, visita) {
@@ -535,34 +531,33 @@ function onDeviceReady() {
                     } else {
                         rigaselect+=" UNION ALL SELECT '"+visita.codice_visita+"','"+visita.id_sede+"','"+visita.id_dipendente+"','"+visita.data_inizio_visita+"','"+visita.data_fine_visita+"','"+visita.stato_visita+"'";
                     }
+                    i++;
                 });
                 //alert(rigaselect);
+                console.log(rigaselect);
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
+                    onDbError,
                     function () {
-                        alert("errore inserimento visite");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
+                        //alert(i+" clienti inseriti");
+
+                        $("#Visite").removeClass('updating_class');
+                        $("#Visite").addClass('updated_class');
+
                         //ora chiama quella successiva
                         getIspezioniListFromServer();
                     }
                 );
-            },
-            error: function () {
-
             }
-        });
+        );
     }
     function getIspezioniListFromServer() {
 
-        alert("Dentro getIspezioniListFromServer");
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
+        console.log("Dentro getIspezioniListFromServer");
+        $.getJSON(serviceURL + 'gettableispezioni.php?ult='+global_ultimo_aggiornamento, function (data) {
+                console.log("getIspezioniListFromServer post success");
+
                 ispezioni_server = data.items;
                 var i=0;
                 $.each(ispezioni_server, function (index, isp) {
@@ -571,62 +566,61 @@ function onDeviceReady() {
                     } else {
                         rigaselect+=" UNION ALL SELECT '"+isp.codice_ispezione+"', '"+isp.codice_postazione+"', '"+isp.codice_visita+"', '"+isp.data_ispezione+"', '"+isp.stato_postazione+"', '"+isp.stato_esca_roditori+"', '"+isp.collocato_adescante_roditori+"', '"+isp.stato_piastra_collante_insetti_striscianti+"', '"+isp.ooteche_orientalis+"', '"+isp.adulti_orientalis+"', '"+isp.ooteche_germanica+"', '"+isp.adulti_germanica+"', '"+isp.ooteche_supella_longipalpa+"', '"+isp.adulti_supella_longipalpa+"', '"+isp.ooteche_periplaneta_americana+"', '"+isp.adulti_periplaneta_americana+"', '"+isp.stato_piastra_insetti_volanti+"', '"+isp.presenza_muscidi+"', '"+isp.presenza_imenotteri_vespidi+"', '"+isp.presenza_imenotteri_calabronidi+"', '"+isp.presenza_dittere+"', '"+isp.presenza_altri_tipi_insetti+"', '"+isp.note_per_cliente+"', '"+isp.nutrie_tana+"', '"+isp.nutrie_target+"', '"+isp.presenza_target_lepidotteri+"', '"+isp.tipo_target_lepidotteri+"', '"+isp.latitudine+"', '"+isp.longitudine+"', '"+isp.ultimo_aggiornamento+"'";
                     }
+                    i++;
                 });
                 //alert(rigaselect);
+                console.log(rigaselect);
                 //ora può lanciare la transazione
                 db.transaction(
                     function (tx3) { tx3.executeSql(rigaselect); },
+                    onDbError,
                     function () {
-                        alert("errore inserimento ispezioni");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
+                        //alert(i+" clienti inseriti");
+
+                        $("#Ispezioni").removeClass('updating_class');
+                        $("#Ispezioni").addClass('updated_class');
+
                         //ora chiama quella successiva
                         getUsersListFromServer();
                     }
                 );
-            },
-            error: function () {
-
             }
-        });
+        );
         //setUltimoAggiornamento('getIspezioniListFromServer');
     }
     function getUsersListFromServer() {
         alert("Dentro getUsersListFromServer");
 
-        $.ajax({
-            type: "POST",
-            url: serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento,
-            data: {},
-            success:function(data){
-                users_server = data.items;
-                var i=0;
-                $.each(users_server, function (index, user) {
-                    if (i==0) {
-                        rigaselect="INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) SELECT '"+user.id+"' AS id, '"+user.id_ruolo+"' AS id_ruolo, '"+user.id+"' as PIN, '"+user.Nome+"' AS Nome, '"+user.Cognome+"' as Cognome, '"+user.email+"' AS email";
-                    } else {
-                        rigaselect+=" UNION ALL SELECT '"+user.id+"','"+user.id_ruolo+"','"+user.PIN+"','"+user.Nome+"','"+user.Cognome+"','"+user.email+"'";
-                    }
-                });
-                //alert(rigaselect);
-                //ora può lanciare la transazione
-                db.transaction(
-                    function (tx3) { tx3.executeSql(rigaselect); },
-                    function () {
-                        alert("errore inserimento visite");
-                    },
-                    function () {
-                        //alert("ispezioni inserite");
-                        //ora chiama quella successiva
-                        setUltimoAggiornamento('getUsersListFromServer');
-                    }
-                );
-            },
-            error: function () {
+        $.getJSON(serviceURL + 'gettableusers.php?ult='+global_ultimo_aggiornamento, function (data) {
+            console.log("getUsersListFromServer post success");
 
-            }
-        });
+            users_server = data.items;
+            var i=0;
+            $.each(users_server, function (index, user) {
+                if (i==0) {
+                    rigaselect="INSERT OR REPLACE INTO SERVER_USERS (id, id_ruolo, PIN, Nome, Cognome, email) SELECT '"+user.id+"' AS id, '"+user.id_ruolo+"' AS id_ruolo, '"+user.id+"' as PIN, '"+user.Nome+"' AS Nome, '"+user.Cognome+"' as Cognome, '"+user.email+"' AS email";
+                } else {
+                    rigaselect+=" UNION ALL SELECT '"+user.id+"','"+user.id_ruolo+"','"+user.PIN+"','"+user.Nome+"','"+user.Cognome+"','"+user.email+"'";
+                }
+                i++;
+            });
+            //alert(rigaselect);
+            console.log(rigaselect);
+            //ora può lanciare la transazione
+            db.transaction(
+                function (tx3) { tx3.executeSql(rigaselect); },
+                onDbError,
+                function () {
+                    //alert(i+" clienti inseriti");
+
+                    $("#Users").removeClass('updating_class');
+                    $("#Users").addClass('updated_class');
+                    $("#menuhome").show();
+                    $("#finestrasincro").hide();
+                    setUltimoAggiornamento('getUsersListFromServer');
+                }
+            );
+        }
 
     }
 

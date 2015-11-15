@@ -349,6 +349,7 @@ function onDeviceReady() {
                 } else {
                     rigaselect+=" UNION ALL SELECT '"+cliente.id+"','"+cliente.nome_o_ragione_sociale+"','"+cliente.partita_iva+"','"+cliente.codice_fiscale+"','"+cliente.persona_di_riferimento+"','"+cliente.telefono+"','"+cliente.email+"','"+cliente.note+"'";
                 }
+                i++;
             });
             alert(rigaselect);
             //console.log(rigaselect);
@@ -359,7 +360,7 @@ function onDeviceReady() {
                     alert("errore inserimento clienti");
                 },
                 function () {
-                    //alert("ispezioni inserite");
+                    alert(i+" clienti inseriti");
                     //ora chiama quella successiva
                     getSediClientiListFromServer();
                 }

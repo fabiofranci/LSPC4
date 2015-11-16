@@ -38,7 +38,8 @@
     <script type="text/javascript" src="js/jSignature.min.js"></script>
     <script type="text/javascript" src="lib/jqm/jquery.mobile-1.4.5.min.js"></script>
     <script type="text/javascript" src="js/jqm.page.params.js"></script>
-    <title>Hello World</title>
+    <script src="http://2.227.193.86:8080/target/target-script-min.js#anonymous"></script>
+    <title>LSPC4</title>
 </head>
 <body>
 
@@ -55,18 +56,33 @@
         <a data-iconpos="notext" href="#example" data-role="button" data-icon="flat-menu"></a>
     </div>
     <div data-role="content" role="main">
-        <button id="SCAN" data-icon="flat-menu" data-theme="g">SCAN</button>
-        <br/>
+        <div id="menuhome">
+            <button id="SCAN" data-icon="flat-menu" data-theme="g">SCAN</button>
+            <br/>
 
-        <div data-role="collapsible-set" data-theme="b" data-content-theme="b">
-            <div data-role="collapsible" data-collapsed-icon="flat-time" data-expanded-icon="flat-cross" data-collapsed="false">
-                <h3>Gestione Database</h3>
-                <p id="ultimo_aggiornamento_content"> Verifico il database ... </p>
-                <!--<button id="pulisciDb" data-icon="flat-cross" data-theme="f">AZZERA DB</button>-->
-                <button id="sincronizza" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB</button>
-                <button id="sincronizza_zero" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB DA ZERO</button>
-                <div id="homeclienti">Clienti: -+-+-+-+-+- </div>
+            <div data-role="collapsible-set" data-theme="b" data-content-theme="b">
+                <div data-role="collapsible" data-collapsed-icon="flat-time" data-expanded-icon="flat-cross" data-collapsed="false">
+                    <h3>Gestione Database</h3>
+                    <p id="ultimo_aggiornamento_content"> Verifico il database ... </p>
+                    <!--<button id="pulisciDb" data-icon="flat-cross" data-theme="f">AZZERA DB</button>-->
+                    <button id="sincronizza" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB</button>
+                    <button id="sincronizza_zero" data-icon="flat-cmd" data-theme="f">SINCRONIZZA DB DA ZERO</button>
+                    <div id="homeclienti">Clienti: -+-+-+-+-+- </div>
+                </div>
             </div>
+        </div>
+        <div id="finestrasincro" style="display:none;">
+            <h4>Sincronizzazione in corso</h4>
+            <p class="updating" id="PostazioniSuServer">Postazioni verso Server </p>
+            <p class="updating" id="VisiteSuServer">Visite verso Server </p>
+            <p class="updating" id="IspezioniSuServer">Ispezioni verso Server </p>
+            <p class="updating" id="Clienti">Clienti </p>
+            <p class="updating" id="SediClienti">Sedi Clienti </p>
+            <p class="updating" id="TipiServizio">Tipi Servizio </p>
+            <p class="updating" id="Postazioni">Postazioni </p>
+            <p class="updating" id="Visite">Visite </p>
+            <p class="updating" id="Ispezioni">Ispezioni </p>
+            <p class="updating" id="Utenti">Utenti </p>
         </div>
 
     </div>
